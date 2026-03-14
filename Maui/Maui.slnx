@@ -1,6 +1,0 @@
-<Solution>
-  <Project Path="../MSTest_Appium/MSTest_Appium.csproj" />
-  <Project Path="Maui.csproj">
-    <Deploy Solution="Debug|*" />
-  </Project>
-</Solution>
