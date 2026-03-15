@@ -15,7 +15,7 @@ namespace MauiApp.UITests
       {
          var options = new AppiumOptions();
          options.PlatformName = "Android";
-         options.DeviceName = "Android Emulator";
+         options.DeviceName = "emulator-5554";
          options.AutomationName = "UiAutomator2";
 
          // Path to your MAUI .apk
