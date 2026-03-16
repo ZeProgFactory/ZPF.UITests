@@ -2,18 +2,42 @@
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
 using OpenQA.Selenium.Appium.Enums;
+using System.Diagnostics;
 
 namespace MauiApp.UITests
 {
    [TestClass]
    public class AndroidTests
    {
+      public bool IsRunningEmulator()
+      {
+         string processName = "emulator";
+
+         return Process.GetProcessesByName(processName).Length > 0;
+      }
+
+
+      private static void StartEmulator()
+      {
+         new Process
+         {
+            StartInfo = new ProcessStartInfo(@"C:\Program Files (x86)\Android\android-sdk\emulator\emulator.exe")
+            {
+               Arguments = "-avd pixel_7_-_api_36_0",
+               UseShellExecute = true
+            }
+         }.Start();
+      }
+
       private AndroidDriver _driver;
 
       [TestInitialize]
       public void Setup()
       {
-         // C:\Program Files (x86)\Android\android-sdk\emulator\emulator -avd pixel_7_-_api_36_0
+         if (!IsRunningEmulator())
+         {
+            StartEmulator();
+         }
 
 
          var options = new AppiumOptions();
@@ -22,8 +46,8 @@ namespace MauiApp.UITests
          options.AutomationName = "UiAutomator2";
 
          // Path to your MAUI .apk
-         // options.App = @"C:\Users\zepro\AppData\Local\Xamarin\Mono for Android\Archives\2026-03-14\Maui 3-14-26 5.21 AM.apkarchive\com.companyname.maui.apk";
-         options.App = @"C:\Users\zepro\AppData\Local\Xamarin\Mono for Android\Archives\2026-03-16\Maui 3-16-26 9.30 AM.apkarchive\com.companyname.maui.apk";
+         options.App = @"C:\Users\zepro\AppData\Local\Xamarin\Mono for Android\Archives\2026-03-16\Maui 3-16-26 11.18 AM.apkarchive\com.companyname.maui.apk";
+         //options.App = @"C:\Users\zepro\AppData\Local\Xamarin\Mono for Android\Archives\2026-03-16\Maui 3-16-26 9.30 AM.apkarchive\com.companyname.maui.apk";
          _driver = new AndroidDriver(new Uri("http://127.0.0.1:4723"), options);
          _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
       }
