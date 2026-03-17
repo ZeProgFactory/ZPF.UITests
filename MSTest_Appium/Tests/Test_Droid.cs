@@ -3,7 +3,7 @@
 namespace MauiApp.UITests;
 
 [TestClass]
-public class AndroidTests : AndroidTestBase
+public class AndroidTests : TestBase_Android
 {
    [TestMethod]
    public void CounterButton_IncrementsValue()

@@ -3,7 +3,7 @@
 namespace MauiApp.UITests;
 
 [TestClass]
-public class WindowsTests : WinTestBase   
+public class WindowsTests : TestBase_Windows   
 {
    [TestMethod]
    public void CounterButton_IncrementsValue()

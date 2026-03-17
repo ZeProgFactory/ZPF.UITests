@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium.Appium.Windows;
+﻿using OpenQA.Selenium.Appium.Android;
+using OpenQA.Selenium.Appium.Windows;
 
 namespace MauiApp.UITests;
 
@@ -6,20 +7,20 @@ namespace MauiApp.UITests;
 /// Screenshots on failure & Page source on failure
 /// </summary>
 [TestClass]
-public class WinTestBase
+public class TestBase_Android
 {
    /// <summary>
    /// MSTest exposes the test result in TestContext.
    /// </summary>
    public TestContext TestContext { get; set; }
 
-   protected WindowsDriver driver;
+   protected AndroidDriver driver;
 
 
    [TestInitialize]
    public void Setup()
    {
-      driver = DriverFactory.CreateWindowsDriver();
+      driver = DriverFactory.CreateAndroidDriver();
    }
 
    [TestCleanup]
