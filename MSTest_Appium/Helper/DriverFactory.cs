@@ -11,26 +11,6 @@ namespace MauiApp.UITests;
 
 public static class DriverFactory
 {
-   const string DriverUrl = "http://127.0.0.1:4723";
-
-   const string host = "127.0.0.1";
-   const int port = 4723;
-
-   const string AndroidDeviceName = "pixel_7_-_api_36_0"; 
-   const string iOSDeviceName = "iPhone 15 Pro";
-
-   const string APK = @"C:\Users\zepro\AppData\Local\Xamarin\Mono for Android\Archives\2026-03-16\Maui 3-16-26 9.30 AM.apkarchive\com.companyname.maui.apk";
-   // const string APK = @"C:\Users\zepro\AppData\Local\Xamarin\Mono for Android\Archives\2026-03-16\Maui 3-16-26 4.15 PM.apkarchive\com.companyname.maui.apk
-   // ";
-   const string APP_WIN = @"D:\GitWare\Apps\Appium\Maui\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Maui.exe";
-   
-   const string APP_iOS = "the path for the app";
-
-   const string APP_OSX = "/path/to/TheApp.app";
-   const string BundleID_OSX = "com.companyname.theapp";
-
-   public const string TestResults = @"D:\GitWare\Apps\Appium\TestResults\";
-
    // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
 
    public static MacDriver CreateMacDriver()
@@ -43,7 +23,7 @@ public static class DriverFactory
       }
 
       // 1. Start Appium if not running
-      if (!IsPortOpen(host, port))
+      if (!IsPortOpen( UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
       {
          // Choose one:
          StartAppium();
@@ -62,15 +42,15 @@ public static class DriverFactory
          AutomationName = "mac2",
 
          // The full path to the .app file to test
-         App = APP_OSX,
+         App = UITestViewModel.Current.Config.APP_OSX,
       };
 
       // Setting the Bundle ID is required, else the automation will run on Finder
-      options.AddAdditionalAppiumOption(IOSMobileCapabilityType.BundleId,BundleID_OSX);
+      options.AddAdditionalAppiumOption(IOSMobileCapabilityType.BundleId, UITestViewModel.Current.Config.BundleID_OSX);
 
 
       // 3. Create session
-      var _driver = new MacDriver(new Uri(DriverUrl), options);
+      var _driver = new MacDriver(new Uri( UITestViewModel.Current.Config.DriverUrl), options);
 
       return _driver;
    }
@@ -86,7 +66,7 @@ public static class DriverFactory
       }
 
       // 1. Start Appium if not running
-      if (!IsPortOpen(host, port))
+      if (!IsPortOpen( UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
       {
          // Choose one:
          StartAppium();
@@ -108,14 +88,14 @@ public static class DriverFactory
          PlatformVersion = "17.0",
 
          // Don't specify if you don't want a specific device
-         DeviceName = iOSDeviceName,
+         DeviceName = UITestViewModel.Current.Config.iOSDeviceName,
 
          // The full path to the .app file to test or the bundle id if the app is already installed on the device
-         App = APP_iOS,
+         App = UITestViewModel.Current.Config.APP_iOS,
       };
 
       // 3. Create session
-      var _driver = new IOSDriver(new Uri(DriverUrl), options);
+      var _driver = new IOSDriver(new Uri( UITestViewModel.Current.Config.DriverUrl), options);
 
       return _driver;
    }
@@ -131,7 +111,7 @@ public static class DriverFactory
       }
 
       // 1. Start Appium if not running
-      if (!IsPortOpen(host, port))
+      if (!IsPortOpen( UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
       {
          // Choose one:
          StartAppium();
@@ -157,13 +137,13 @@ public static class DriverFactory
          App = "com.companyname.basicappiumsample",
       };
 
-      options.DeviceName = AndroidDeviceName;
+      options.DeviceName = UITestViewModel.Current.Config.AndroidDeviceName;
 
       // Path to your MAUI .apk
-      options.App = APK;
+      options.App = UITestViewModel.Current.Config.APK;
 
       // 3. Create session
-      var _driver = new AndroidDriver(new Uri(DriverUrl), options);
+      var _driver = new AndroidDriver(new Uri( UITestViewModel.Current.Config.DriverUrl), options);
       _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
 
       return _driver;
@@ -173,7 +153,7 @@ public static class DriverFactory
    public static WindowsDriver CreateWindowsDriver()
    {
       // 1. Start Appium if not running
-      if (!IsPortOpen(host, port))
+      if (!IsPortOpen( UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
       {
          // Choose one:
          StartAppium();
@@ -186,10 +166,10 @@ public static class DriverFactory
       var options = new AppiumOptions();
       options.PlatformName = "Windows";
       options.AutomationName = "Windows";
-      options.App = APP_WIN;
+      options.App = UITestViewModel.Current.Config.APP_WIN;
 
       // 3. Create session
-      return new WindowsDriver(new Uri(DriverUrl), options);
+      return new WindowsDriver(new Uri( UITestViewModel.Current.Config.DriverUrl), options);
    }
 
    // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
@@ -239,7 +219,7 @@ public static class DriverFactory
       {
          StartInfo = new ProcessStartInfo(@"C:\Program Files (x86)\Android\android-sdk\emulator\emulator.exe")
          {
-            Arguments = $"-avd {AndroidDeviceName}",
+            Arguments = $"-avd {UITestViewModel.Current.Config.AndroidDeviceName}",
             UseShellExecute = true
          }
       }.Start();

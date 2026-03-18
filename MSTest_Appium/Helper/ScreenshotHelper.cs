@@ -8,10 +8,12 @@ namespace MauiApp.UITests;
 /// </summary>
 public static class ScreenshotHelper
 {
-   public static void Capture(AppiumDriver driver, string testName, TestContext context)
+   public static void Capture(AppiumDriver driver, string testName, TestContext context, bool IsOK = true)
    {
       var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-      var fileName = Path.Join(DriverFactory.TestResults, $"FAIL_{testName}_{timestamp}.png");
+      var postfix = IsOK ? "" : "_FAIL";
+      var folder = string.IsNullOrEmpty(UITestViewModel.Current.Config.TestResults) ? UITestViewModel.Current.TestContext.DeploymentDirectory : UITestViewModel.Current.Config.TestResults;
+      var fileName = Path.Join(folder, $"{testName}_{timestamp}{postfix}.png");
 
       var screenshot = ((ITakesScreenshot)driver).GetScreenshot();
       //screenshot.SaveAsFile(fileName, ScreenshotImageFormat.Png);
@@ -23,9 +25,11 @@ public static class ScreenshotHelper
    public static void CapturePageSource(AppiumDriver driver, string testName, TestContext context)
    {
       var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-      var fileName = Path.Join(DriverFactory.TestResults, $"FAIL_{testName}_{timestamp}.xml");
+      var folder = string.IsNullOrEmpty(UITestViewModel.Current.Config.TestResults) ? UITestViewModel.Current.TestContext.DeploymentDirectory : UITestViewModel.Current.Config.TestResults;
+      var fileName = Path.Join(folder, $"{testName}_{timestamp}.xml");
 
       File.WriteAllText(fileName, driver.PageSource);
+
       context.AddResultFile(fileName);
    }
 }

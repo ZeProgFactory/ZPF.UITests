@@ -20,17 +20,25 @@ public class TestBase_Windows
    public void Setup()
    {
       driver = DriverFactory.CreateWindowsDriver();
+      UITestViewModel.Current.TestContext = TestContext;
    }
 
    [TestCleanup]
    public void Cleanup()
    {
+      var testName = TestContext.TestName;
+
       if (TestContext.CurrentTestOutcome != UnitTestOutcome.Passed)
       {
-         var testName = TestContext.TestName;
-
-         ScreenshotHelper.Capture(driver, testName, TestContext);
+         ScreenshotHelper.Capture(driver, testName, TestContext, false);
          ScreenshotHelper.CapturePageSource(driver, testName, TestContext);
+      }
+      else
+      {
+         if (UITestViewModel.Current.Config.ScreenshotOnExit)
+         {
+            ScreenshotHelper.Capture(driver, testName, TestContext);
+         }
       }
 
       driver?.Quit();

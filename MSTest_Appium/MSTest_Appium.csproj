@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Appium.WebDriver" Version="8.1.0" />
+    <PackageReference Include="ZPF_Basics" Version="2.1.1.17" />
   </ItemGroup>
 
   <ItemGroup>
