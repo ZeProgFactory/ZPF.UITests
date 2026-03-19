@@ -32,7 +32,7 @@ public static class ImageDiff
    /// </summary>
    /// <param name="img1Path"></param>
    /// <param name="img2Path"></param>
-   /// <param name="diffOutputPath">Red pixels = changed areas /  Green rectangle = bounding box</param>
+   /// <param name="diffOnlyPath">Red pixels = changed areas /  Green rectangle = bounding box</param>
    /// <param name="threshold">Threshold for pixel difference (0-765, where 765 means all RGB channels are different)</param>
    /// <param name="minRegionSize"></param>
    /// <param name="mergeDistance"></param>
@@ -41,7 +41,8 @@ public static class ImageDiff
    public static ImageDiffResult CompareImages(
        string img1Path,
        string img2Path,
-       string diffOutputPath,
+       string img2wDiffPath = null,
+       string diffOnlyPath = null,
        int threshold = 10,
        int minRegionSize = 20,
        float mergeDistance = 10f)
@@ -141,7 +142,10 @@ public static class ImageDiff
                }
             }
 
-            boundingBoxes.Add(new SKRect(minX, minY, maxX, maxY));
+            boundingBoxes.Add(
+               new SKRect(
+                  Math.Max(0, minX - 2), Math.Max(0, minY - 2),
+                  maxX + 4, maxY + 4));
             regionPixelCounts.Add(pixelCount);
          }
       }
@@ -234,13 +238,40 @@ public static class ImageDiff
       }
 
       // -----------------------------
+      // OPTIONAL: DRAW BOUNDING BOXES ON SECOND IMAGE
+      // -----------------------------
+      if (!string.IsNullOrEmpty(img2wDiffPath))
+      {
+         using var second = bmp2.Copy();
+         using var canvas2 = new SKCanvas(second);
+
+         var paint2 = new SKPaint
+         {
+            StrokeWidth = 5,
+            IsStroke = true,
+            Color = SKColors.Red,
+         };
+
+         foreach (var box in boundingBoxes)
+            canvas2.DrawRect(box, paint2);
+
+         using var img2 = SKImage.FromBitmap(second);
+         using var data2 = img2.Encode(SKEncodedImageFormat.Png, 100);
+         using var stream2 = File.OpenWrite(img2wDiffPath);
+         data2.SaveTo(stream2);
+      }
+
+      // -----------------------------
       // SAVE DIFF IMAGE
       // -----------------------------
-      using (var image = SKImage.FromBitmap(diff))
-      using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
-      using (var stream = File.OpenWrite(diffOutputPath))
+      if (!string.IsNullOrEmpty(diffOnlyPath))
       {
-         data.SaveTo(stream);
+         using (var image = SKImage.FromBitmap(diff))
+         using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+         using (var stream = File.OpenWrite(diffOnlyPath))
+         {
+            data.SaveTo(stream);
+         }
       }
 
       // -----------------------------
