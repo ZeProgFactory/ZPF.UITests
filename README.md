@@ -1,3 +1,5 @@
+![ZPF.UITests](Doc/iconGitHub.svg)
+
 # Maui UI Test with Appium
 This repository contains a sample Maui UI test project that demonstrates how to use Appium for testing Maui applications. The project is set up to target .NET 10.0 and uses C# 14.0 features.
 
