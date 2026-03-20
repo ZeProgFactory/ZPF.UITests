@@ -5,7 +5,6 @@
   <Project Path="Maui/Maui.csproj">
     <Deploy />
   </Project>
-  <Project Path="UITest/UITest.csproj" />
-  <Project Path="ZPF.UITest/ZPF.UITest.csproj" Id="dff45ce3-1276-4d58-a8f7-5c90c1ecfc28" />
   <Project Path="MSTest_Appium/MSTest_Appium.csproj" />
+  <Project Path="ZPF.UITests/ZPF.UITests.csproj" />
 </Solution>

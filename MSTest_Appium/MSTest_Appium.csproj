@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSTest.Sdk/4.0.2">
+﻿<Project Sdk="MSTest.Sdk/4.1">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ZPF.UITest\ZPF.UITest.csproj" />
+    <ProjectReference Include="..\ZPF.UITests\ZPF.UITests.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,9 +26,6 @@
 
   <ItemGroup>
     <PackageReference Update="MSTest.TestAdapter" Version="4.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Update="MSTest.TestFramework" Version="4.1.0" />
   </ItemGroup>
 
