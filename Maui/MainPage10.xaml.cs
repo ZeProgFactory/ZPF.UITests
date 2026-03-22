@@ -1,10 +1,10 @@
 ﻿namespace Maui
 {
-   public partial class MainPage : ContentPage
+   public partial class MainPage10 : ContentPage
    {
       int count = 0;
 
-      public MainPage()
+      public MainPage10()
       {
          InitializeComponent();
       }

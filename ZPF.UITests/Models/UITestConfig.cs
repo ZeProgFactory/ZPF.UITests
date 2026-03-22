@@ -7,6 +7,8 @@ public class UITestConfig
    /// </summary>
    public string TestResults { get; set; } = @"D:\GitWare\Apps\Appium\TestResults\";
 
+   public bool GroupSessionInFolder { get; set; } = true;
+
    /// <summary>
    /// If true, a screenshot will be taken on test exit even if the test passed. Useful for visual verification of the final state. 
    /// </summary>
@@ -14,6 +16,7 @@ public class UITestConfig
 
 
    public bool CompareBeforeAfter { get; set; } =  false;
+
 
 
    #region - - - Appium Server Configuration - - -
