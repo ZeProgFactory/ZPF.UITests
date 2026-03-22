@@ -1,0 +1,10 @@
+{
+  "DllPath": "D:\\GitWare\\Nugets\\ZPF_UITests\\ZPF.UITests\\bin\\Release\\net10.0\\ZPF.UITests.dll",
+  "XmlPath": "D:\\GitWare\\Nugets\\ZPF_UITests\\ZPF.UITests\\bin\\Release\\net10.0\\ZPF.UITests.xml",
+  "OutputDir": "D:\\GitWare\\Nugets\\ZPF_UITests\\Doc\\",
+  "Filter": "",
+  "Title": "ZPF.UITests",
+  "OrderBy": 1,
+  "OutputType": 1,
+  "AutoOpen": true
+}
