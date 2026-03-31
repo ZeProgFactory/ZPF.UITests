@@ -28,6 +28,11 @@ public class TestBase
    {
       var testName = TestContext.TestName;
 
+      if (TestContext.CurrentTestOutcome != UnitTestOutcome.Passed)
+      {
+         ScreenshotHelper.CapturePageSource(Driver, testName, TestContext);
+      }
+
       if (UITestViewModel.Current.Config.CompareBeforeAfter)
       {
          var _AfterImagePath = ScreenshotHelper.Capture(Driver, TestContext, "_AFTER");

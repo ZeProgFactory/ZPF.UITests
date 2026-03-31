@@ -10,7 +10,9 @@
             Padding="30,0"
             VerticalOptions="Center">
 
-            <Image
+         <Image AutomationId="MainPage08" />
+
+         <Image
                 Source="dotnet_bot08.png"
                 SemanticProperties.Description="Cute dot net bot waving hi to you!"
                 HeightRequest="200"
@@ -31,6 +33,7 @@
 
             <Button
                 x:Name="CounterBtn"
+                AutomationId="CounterBtn"
                 Text="Click me"
                 SemanticProperties.Hint="Counts the number of times you click"
                 Clicked="OnCounterClicked"
