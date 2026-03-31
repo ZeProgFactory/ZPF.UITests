@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium.Appium;
+﻿using System.Drawing.Printing;
+using OpenQA.Selenium.Appium;
 using ZPF.UITests;
 
 namespace MauiApp.UITests;
@@ -28,6 +29,7 @@ public class WindowsTests : TestBase_Windows
       UITestViewModel.Current.Config.GroupSessionInFolder = true;
       UITestViewModel.Current.Config.FolderNamingStrategy = FolderNamingStrategies.PrevCurrent;
       UITestViewModel.Current.Config.CompareBeforeAfter = true;
+      UITestViewModel.Current.Config.CapturePageSource = true;
    }
 
 

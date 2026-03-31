@@ -21,8 +21,9 @@ public class UITestConfig
    public bool ScreenshotOnExit { get; set; } = true;
 
 
-   public bool CompareBeforeAfter { get; set; } =  false;
+   public bool CompareBeforeAfter { get; set; } = false;
 
+   public bool CapturePageSource { get; set; } = false;
 
 
    #region - - - Appium Server Configuration - - -
@@ -47,7 +48,7 @@ public class UITestConfig
    public string AndroidDeviceName { get; set; } = "pixel_7_-_api_36_0";
    public string APK { get; set; } = @"C:\Users\zepro\AppData\Local\Xamarin\Mono for Android\Archives\2026-03-16\Maui 3-16-26 9.30 AM.apkarchive\com.companyname.maui.apk";
    //public string APK { get; set; } = @"C:\Users\zepro\AppData\Local\Xamarin\Mono for Android\Archives\2026-03-16\Maui 3-16-26 4.15 PM.apkarchive\com.companyname.maui.apk";
-   
+
    #endregion
 
 

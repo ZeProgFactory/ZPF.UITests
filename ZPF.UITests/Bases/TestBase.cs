@@ -28,7 +28,7 @@ public class TestBase
    {
       var testName = TestContext.TestName;
 
-      if (TestContext.CurrentTestOutcome != UnitTestOutcome.Passed)
+      if (TestContext.CurrentTestOutcome != UnitTestOutcome.Passed || UITestViewModel.Current.Config.CapturePageSource)
       {
          ScreenshotHelper.CapturePageSource(Driver, testName, TestContext);
       }
