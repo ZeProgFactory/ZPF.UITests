@@ -16,15 +16,15 @@ public class AndroidTests : TestBase_Android
       // Global setup for this test class
 
       // 1)
-      // UITestViewModel.Current.Config.AndroidDeviceName = "Android Emulator"; // or your device name
-      // UITestViewModel.Current.Config.APK = @"C:\Path\To\Your\App.apk";
-
-      UITestViewModel.Current.Config.TestResults = @"D:\GitWare\Nugets\ZPF_UITests\TestResults\";
+      UITestViewModel.Current.Config.TestResults = @"D:\GitWare\Nugets\ZPF_UITests\TestResults\Droid\";
       UITestViewModel.Current.Config.AndroidDeviceName = "pixel_7_-_api_36_0"; // or your device name
-      UITestViewModel.Current.Config.APK = @"D:\GitWare\Nugets\ZPF_UITests\TestApps\com.companyname.maui.apk";
+      // UITestViewModel.Current.Config.APK = @"D:\GitWare\Nugets\ZPF_UITests\TestApps\com.companyname.maui.apk";
       UITestViewModel.Current.Config.PackageID = "com.companyname.maui";
 
+      UITestViewModel.Current.Config.GroupSessionInFolder = true;
+      UITestViewModel.Current.Config.FolderNamingStrategy = FolderNamingStrategies.PrevCurrent;
       UITestViewModel.Current.Config.CompareBeforeAfter = true;
+      UITestViewModel.Current.Config.CapturePageSource = true;
    }
 
 

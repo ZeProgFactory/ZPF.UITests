@@ -22,8 +22,6 @@ public class WindowsTests : TestBase_Windows
       // Global setup for this test class
 
       // 1)
-      // UITestViewModel.Current.Config.APP_WIN = @"C:\Path\To\Your\App.exe";  
-
       UITestViewModel.Current.Config.TestResults = @"D:\GitWare\Nugets\ZPF_UITests\TestResults\Win\";
       UITestViewModel.Current.Config.APP_WIN = @"D:\GitWare\Nugets\ZPF_UITests\Maui\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Maui.exe";
       UITestViewModel.Current.Config.GroupSessionInFolder = true;
