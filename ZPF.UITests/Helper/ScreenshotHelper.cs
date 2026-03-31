@@ -13,7 +13,7 @@ public static class ScreenshotHelper
       var testName = context.TestName;
 
       var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-      var folder = string.IsNullOrEmpty(UITestViewModel.Current.Config.TestResults) ? UITestViewModel.Current.TestContext.DeploymentDirectory : UITestViewModel.Current.Config.TestResults;
+      var folder = string.IsNullOrEmpty(UITestViewModel.Current.GetCurentFolder()) ? UITestViewModel.Current.TestContext.DeploymentDirectory : UITestViewModel.Current.GetCurentFolder();
       var fileName = Path.Join(folder, $"{testName}_{timestamp}{postfix}.png");
 
       var screenshot = ((ITakesScreenshot)driver).GetScreenshot();
@@ -28,7 +28,7 @@ public static class ScreenshotHelper
    {
       var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
       var postfix = IsOK ? "" : "_FAIL";
-      var folder = string.IsNullOrEmpty(UITestViewModel.Current.Config.TestResults) ? UITestViewModel.Current.TestContext.DeploymentDirectory : UITestViewModel.Current.Config.TestResults;
+      var folder = string.IsNullOrEmpty(UITestViewModel.Current.GetCurentFolder()) ? UITestViewModel.Current.TestContext.DeploymentDirectory : UITestViewModel.Current.GetCurentFolder();
       var fileName = Path.Join(folder, $"{testName}_{timestamp}{postfix}.png");
 
       var screenshot = ((ITakesScreenshot)driver).GetScreenshot();
@@ -42,7 +42,7 @@ public static class ScreenshotHelper
    public static string CapturePageSource(AppiumDriver driver, string testName, TestContext context)
    {
       var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-      var folder = string.IsNullOrEmpty(UITestViewModel.Current.Config.TestResults) ? UITestViewModel.Current.TestContext.DeploymentDirectory : UITestViewModel.Current.Config.TestResults;
+      var folder = string.IsNullOrEmpty(UITestViewModel.Current.GetCurentFolder()) ? UITestViewModel.Current.TestContext.DeploymentDirectory : UITestViewModel.Current.GetCurentFolder();
       var fileName = Path.Join(folder, $"{testName}_{timestamp}.xml");
 
       File.WriteAllText(fileName, driver.PageSource);

@@ -1,5 +1,7 @@
 ﻿namespace ZPF.UITests;
 
+public enum FolderNamingStrategies { PrevCurrent, TimeStamp }
+
 public class UITestConfig
 {
    /// <summary>
@@ -7,7 +9,11 @@ public class UITestConfig
    /// </summary>
    public string TestResults { get; set; } = @"D:\GitWare\Apps\Appium\TestResults\";
 
+
    public bool GroupSessionInFolder { get; set; } = true;
+
+   public FolderNamingStrategies FolderNamingStrategy { get; set; } = FolderNamingStrategies.PrevCurrent;
+
 
    /// <summary>
    /// If true, a screenshot will be taken on test exit even if the test passed. Useful for visual verification of the final state. 
@@ -57,6 +63,7 @@ public class UITestConfig
 
    public string BundleID_OSX { get; set; } = "com.companyname.theapp";
    public string APP_OSX { get; set; } = "/path/to/TheApp.app";
+   public string PackageID { get; set; }
 
    #endregion
 

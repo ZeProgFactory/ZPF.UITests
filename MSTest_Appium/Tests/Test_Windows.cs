@@ -22,19 +22,40 @@ public class WindowsTests : TestBase_Windows
 
       // 1)
       // UITestViewModel.Current.Config.APP_WIN = @"C:\Path\To\Your\App.exe";  
+
+      UITestViewModel.Current.Config.TestResults = @"D:\GitWare\Nugets\ZPF_UITests\TestResults\Win\";
+      UITestViewModel.Current.Config.APP_WIN = @"D:\GitWare\Nugets\ZPF_UITests\Maui\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Maui.exe";
+      UITestViewModel.Current.Config.GroupSessionInFolder = true;
+      UITestViewModel.Current.Config.FolderNamingStrategy = FolderNamingStrategies.PrevCurrent;
       UITestViewModel.Current.Config.CompareBeforeAfter = true;
    }
 
 
    [TestMethod]
-   public void CounterButton_IncrementsValue()
+   public void _01CounterButton_IncrementsValue()
    {
-      //var button = Driver.FindElement(MobileBy.AccessibilityId("CounterBtn"));
       var button = Driver.FindUIElement("CounterBtn");
 
       button.Click();
+      Task.Delay(50).Wait(); // Wait for the click to register and show up on the screenshot
       button.Click();
+      Task.Delay(50).Wait(); // Wait for the click to register and show up on the screenshot
 
       Assert.AreEqual("Clicked 2 times", button.Text);
+   }
+
+
+   [TestMethod]
+   public void _02ChangePage()
+   {
+      Driver.FindUIElement("MenuBar").Click();
+      var m = Driver.FindUIElement("navItem", "Home09");
+      m.Click();
+      Task.Delay(50).Wait(); // Wait for the click to register and show up on the screenshot
+
+      var appTitle = Driver.FindUIElement("AppTitle").Text;
+      var pageTitle = Driver.FindUIElement("title").Text;
+
+      Assert.AreEqual("Home09", pageTitle);
    }
 }

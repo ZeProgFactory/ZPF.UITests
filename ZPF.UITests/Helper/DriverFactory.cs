@@ -23,7 +23,7 @@ public static class DriverFactory
       }
 
       // 1. Start Appium if not running
-      if (!IsPortOpen( UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
+      if (!IsPortOpen(UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
       {
          // Choose one:
          StartAppium();
@@ -50,7 +50,7 @@ public static class DriverFactory
 
 
       // 3. Create session
-      var _driver = new MacDriver(new Uri( UITestViewModel.Current.Config.DriverUrl), options);
+      var _driver = new MacDriver(new Uri(UITestViewModel.Current.Config.DriverUrl), options);
 
       return _driver;
    }
@@ -66,7 +66,7 @@ public static class DriverFactory
       }
 
       // 1. Start Appium if not running
-      if (!IsPortOpen( UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
+      if (!IsPortOpen(UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
       {
          // Choose one:
          StartAppium();
@@ -95,7 +95,7 @@ public static class DriverFactory
       };
 
       // 3. Create session
-      var _driver = new IOSDriver(new Uri( UITestViewModel.Current.Config.DriverUrl), options);
+      var _driver = new IOSDriver(new Uri(UITestViewModel.Current.Config.DriverUrl), options);
 
       return _driver;
    }
@@ -111,7 +111,7 @@ public static class DriverFactory
       }
 
       // 1. Start Appium if not running
-      if (!IsPortOpen( UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
+      if (!IsPortOpen(UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
       {
          // Choose one:
          StartAppium();
@@ -143,7 +143,7 @@ public static class DriverFactory
       options.App = UITestViewModel.Current.Config.APK;
 
       // 3. Create session
-      var _driver = new AndroidDriver(new Uri( UITestViewModel.Current.Config.DriverUrl), options);
+      var _driver = new AndroidDriver(new Uri(UITestViewModel.Current.Config.DriverUrl), options);
       _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
 
       return _driver;
@@ -153,7 +153,7 @@ public static class DriverFactory
    public static WindowsDriver CreateWindowsDriver()
    {
       // 1. Start Appium if not running
-      if (!IsPortOpen( UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
+      if (!IsPortOpen(UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
       {
          // Choose one:
          StartAppium();
@@ -169,7 +169,7 @@ public static class DriverFactory
       options.App = UITestViewModel.Current.Config.APP_WIN;
 
       // 3. Create session
-      return new WindowsDriver(new Uri( UITestViewModel.Current.Config.DriverUrl), options);
+      return new WindowsDriver(new Uri(UITestViewModel.Current.Config.DriverUrl), options);
    }
 
    // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
