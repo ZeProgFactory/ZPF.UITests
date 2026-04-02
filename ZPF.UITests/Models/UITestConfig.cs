@@ -26,6 +26,12 @@ public class UITestConfig
    public bool CapturePageSource { get; set; } = false;
 
 
+   /// <summary>
+   /// Android &amp; Mac: The unique identifier of the app, used to check if the app is already installed and to uninstall it after the test run. For Android, this is the package name (e.g. "com.companyname.app"), for Mac, this is the bundle ID (e.g. "com.companyname.app").
+   /// </summary>
+   public string PackageID { get; set; }
+
+
    #region - - - Appium Server Configuration - - -
 
    public string DriverUrl { get; set; } = "http://127.0.0.1:4723";
@@ -63,7 +69,6 @@ public class UITestConfig
 
    public string BundleID_OSX { get; set; } = "com.companyname.theapp";
    public string APP_OSX { get; set; } = "/path/to/TheApp.app";
-   public string PackageID { get; set; }
 
    #endregion
 
