@@ -108,8 +108,11 @@ public static class DriverFactory
       {
          StartEmulator();
 
-         Thread.Sleep(2500);
+         Thread.Sleep(3000);
       }
+
+      // 0. Ensure the device is authorized for ADB debugging
+      WaitForDeviceAuthorized();
 
       // 1. Start Appium if not running
       if (!IsPortOpen(UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
@@ -118,7 +121,7 @@ public static class DriverFactory
          StartAppium();
 
          // Wait for server to be ready
-         Thread.Sleep(3000);
+         Thread.Sleep(4000);
       }
 
       // 2. Configure Appium options
@@ -246,6 +249,126 @@ public static class DriverFactory
             UseShellExecute = true
          }
       }.Start();
+   }
+
+   // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
+
+   private const string AdbPath = @"C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe";
+
+   /// <summary>
+   /// Waits for at least one ADB device to be in the "device" (authorized) state.
+   /// If the device is in the "unauthorized" state, attempts adb kill-server / start-server
+   /// to trigger a new authorization prompt on the device, then retries.
+   /// </summary>
+   private static void WaitForDeviceAuthorized(int maxRetries = 30, int delayMs = 2000)
+   {
+      bool killedServer = false;
+
+      for (int i = 0; i < maxRetries; i++)
+      {
+         var status = GetAdbDeviceStatus();
+
+         if (status == AdbDeviceStatus.Authorized)
+         {
+            Debug.WriteLine("ADB device is authorized.");
+            return;
+         }
+
+         if (status == AdbDeviceStatus.Unauthorized && !killedServer)
+         {
+            // Restart the ADB server to trigger the authorization dialog on the device
+            Debug.WriteLine("ADB device unauthorized. Restarting ADB server to trigger authorization prompt...");
+            RunAdbCommand("kill-server");
+            Thread.Sleep(1000);
+            RunAdbCommand("start-server");
+            killedServer = true;
+         }
+
+         Debug.WriteLine($"Waiting for device authorization (attempt {i + 1}/{maxRetries}, status: {status})...");
+         Thread.Sleep(delayMs);
+      }
+
+      throw new InvalidOperationException(
+         $"Timed out waiting for an authorized ADB device after {maxRetries * delayMs / 1000} seconds. "
+         + "Please check the USB debugging authorization dialog on the device/emulator.");
+   }
+
+   // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
+
+   private enum AdbDeviceStatus
+   {
+      NoDevice,
+      Unauthorized,
+      Authorized
+   }
+
+   /// <summary>
+   /// Runs "adb devices" and returns the authorization status of the first connected device.
+   /// </summary>
+   private static AdbDeviceStatus GetAdbDeviceStatus()
+   {
+      string output = RunAdbCommand("devices");
+
+      // Parse each line after "List of devices attached"
+      var lines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+
+      foreach (var line in lines)
+      {
+         var trimmed = line.Trim();
+
+         // Skip header line
+         if (trimmed.StartsWith("List of devices", StringComparison.OrdinalIgnoreCase))
+            continue;
+
+         // Each device line is: <serial>\t<state>
+         if (trimmed.Contains("\t"))
+         {
+            var parts = trimmed.Split('\t');
+            var state = parts.Length > 1 ? parts[1].Trim() : string.Empty;
+
+            if (state.Equals("device", StringComparison.OrdinalIgnoreCase))
+               return AdbDeviceStatus.Authorized;
+
+            if (state.Equals("unauthorized", StringComparison.OrdinalIgnoreCase))
+               return AdbDeviceStatus.Unauthorized;
+         }
+      }
+
+      return AdbDeviceStatus.NoDevice;
+   }
+
+   // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
+
+   /// <summary>
+   /// Runs an ADB command and returns the standard output.
+   /// </summary>
+   private static string RunAdbCommand(string arguments)
+   {
+      try
+      {
+         var process = new Process
+         {
+            StartInfo = new ProcessStartInfo(AdbPath)
+            {
+               Arguments = arguments,
+               UseShellExecute = false,
+               RedirectStandardOutput = true,
+               RedirectStandardError = true,
+               CreateNoWindow = true
+            }
+         };
+
+         process.Start();
+         string output = process.StandardOutput.ReadToEnd();
+         process.WaitForExit(10000);
+
+         return output;
+      }
+      catch (Exception ex)
+      {
+         Debug.WriteLine($"Error running adb command '{arguments}': {ex.Message}");
+         return string.Empty;
+      }
    }
 
    // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
