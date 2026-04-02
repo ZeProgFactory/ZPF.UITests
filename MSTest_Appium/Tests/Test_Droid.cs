@@ -43,7 +43,36 @@ public class AndroidTests : TestBase_Android
 
 
    [TestMethod]
-   public void _02ChangePage()
+   public void _02CounterButton_IncrementsValue()
+   {
+      Task.Delay(5000).Wait(); // Wait for the click to register and show up on the screenshot
+
+      var width = 1080;
+      var height = 2400;
+      var startX = width / 2;
+      var startY = 1790;
+
+      // https://deepwiki.com/appium/appium-uiautomator2-driver/3.2-gesture-commands
+      // Tap at specific coordinates 
+      var args = new Dictionary<string, object>
+      {
+         { "x", startX },
+         { "y", startY }
+      };
+
+      Driver.ExecuteScript("mobile: clickGesture", args);
+      Task.Delay(50).Wait(); // Wait for the click to register and show up on the screenshot
+
+      Driver.ExecuteScript("mobile: clickGesture", args);
+      Task.Delay(50).Wait(); // Wait for the click to register and show up on the screenshot
+
+      var button = Driver.FindUIElement("CounterBtn");
+      Assert.AreEqual("Clicked 2 times", button.Text);
+   }
+
+
+   [TestMethod]
+   public void _03ChangePage()
    {
       var m0 = Driver.FindElement(MobileBy.AccessibilityId("Open navigation drawer"));
       m0.Click();
