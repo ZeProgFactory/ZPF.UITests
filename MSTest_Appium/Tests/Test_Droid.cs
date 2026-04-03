@@ -60,6 +60,9 @@ public class AndroidTests : TestBase_Android
          { "y", startY }
       };
 
+      // Example 1: Get window size using ExecuteScript
+      var sizeResult = Driver.ExecuteScript("mobile: getWindowSize");
+
       Driver.ExecuteScript("mobile: clickGesture", args);
       Task.Delay(50).Wait(); // Wait for the click to register and show up on the screenshot
 

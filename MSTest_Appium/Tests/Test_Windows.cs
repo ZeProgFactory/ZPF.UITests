@@ -1,5 +1,6 @@
 ﻿using System.Drawing.Printing;
 using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.Appium.Windows;
 using ZPF.UITests;
 
 namespace MauiApp.UITests;
@@ -24,6 +25,7 @@ public class WindowsTests : TestBase_Windows
       // 1)
       UITestViewModel.Current.Config.TestResults = @"D:\GitWare\Nugets\ZPF_UITests\TestResults\Win\";
       UITestViewModel.Current.Config.APP_WIN = @"D:\GitWare\Nugets\ZPF_UITests\Maui\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Maui.exe";
+
       UITestViewModel.Current.Config.GroupSessionInFolder = true;
       UITestViewModel.Current.Config.FolderNamingStrategy = FolderNamingStrategies.PrevCurrent;
       UITestViewModel.Current.Config.CompareBeforeAfter = true;
@@ -46,7 +48,37 @@ public class WindowsTests : TestBase_Windows
 
 
    [TestMethod]
-   public void _02ChangePage()
+   public void _02CounterButton_IncrementsValue()
+   {
+      Task.Delay(5000).Wait(); // Wait for the click to register and show up on the screenshot
+
+      var width = 1906;
+      var height = 1016;
+      var startX = width / 2;
+      var startY = 730;
+
+      // https://deepwiki.com/appium/appium-uiautomator2-driver/3.2-gesture-commands
+      // Tap at specific coordinates 
+      var args = new Dictionary<string, object>
+      {
+         { "x", startX },
+         { "y", startY }
+      };
+
+      Driver.ExecuteScript("windows: click", args);
+      Task.Delay(50).Wait(); // Wait for the click to register and show up on the screenshot
+
+      Driver.ExecuteScript("windows: click", args);
+      Task.Delay(50).Wait(); // Wait for the click to register and show up on the screenshot
+
+      var button = Driver.FindUIElement("CounterBtn");
+      Assert.AreEqual("Clicked 2 times", button.Text);
+   }
+
+
+   [TestMethod]
+   public void _03ChangePage()
+
    {
       Driver.FindUIElement("MenuBar").Click();
       var m = Driver.FindUIElement("navItem", "Home09");
