@@ -22,6 +22,7 @@ public static class AppiumExtensions
       }
    }
 
+
    public static AppiumElement FindUIElement(this AppiumDriver driver, string id, string text)
    {
       try
@@ -45,5 +46,7 @@ public static class AppiumExtensions
          return null;
       }
    }
+
+
 
 }

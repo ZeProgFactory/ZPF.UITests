@@ -27,6 +27,10 @@ public class AndroidTests : TestBase_Android
       UITestViewModel.Current.Config.CapturePageSource = true;
    }
 
+   /// <summary>
+   /// Execute methods available in the current driver version are: mobile: getDeviceTime, mobile: getNotifications, mobile: deviceidle, mobile: getGeolocation, mobile: getContexts, mobile: getPerformanceData, mobile: getDisplayDensity, mobile: setGeolocation, mobile: resetGeolocation, mobile: deviceInfo, mobile: getPermissions, mobile: deleteFile, mobile: getConnectivity, mobile: getUiMode, mobile: getSystemBars, mobile: getCurrentPackage, mobile: getActionHistory, mobile: getClipboard, mobile: performEditorAction, mobile: startActivity, mobile: getChromeCapabilities, mobile: setConnectivity, mobile: setUiMode, mobile: gsmVoice, mobile: getCurrentActivity, mobile: getAppStrings, mobile: viewportRect, mobile: acceptAlert, mobile: openNotifications, mobile: scheduleAction, mobile: unscheduleAction, mobile: setClipboard, mobile: listDisplays, mobile: startScreenStreaming, mobile: stopScreenStreaming, mobile: queryAppState, mobile: activateApp, mobile: removeApp, mobile: terminateApp, mobile: startService, mobile: stopService, mobile: refreshGpsCache, mobile: hideKeyboard, mobile: sendTrimMemory, mobile: fingerprint, mobile: gsmSignal, mobile: networkSpeed, mobile: sensorSet, mobile: clickGesture, mobile: longClickGesture, mobile: swipeGesture, mobile: scrollBackTo, mobile: deepLink, mobile: dismissAlert, mobile: batteryInfo, mobile: replaceElementValue, mobile: screenshots, mobile: shell, mobile: stopLogsBroadcast, mobile: changePermissions, mobile: pushFile, mobile: pullFile, mobile: installApp, mobile: clearApp, mobile: broadcast, mobile: isLocked, mobile: bluetooth, mobile: getPerformanceDataTypes, mobile: toggleGps, mobile: statusBar, mobile: gsmCall, mobile: powerAc, mobile: powerCapacity, mobile: flingGesture, mobile: doubleClickGesture, mobile: pinchOpenGesture, mobile: scroll, mobile: type, mobile: installMultipleApks, mobile: pressKey, mobile: resetAccessibilityCache, mobile: listWindows, mobile: startLogsBroadcast, mobile: listSms, mobile: pullFolder, mobile: isAppInstalled, mobile: listApps, mobile: backgroundApp, mobile: lock, mobile: unlock, mobile: isKeyboardShown, mobile: nfc, mobile: isGpsEnabled, mobile: sendSms, mobile: dragGesture, mobile: pinchCloseGesture, mobile: scrollGesture, mobile: viewportScreenshot, mobile: execEmuConsoleCommand, mobile: startMediaProjectionRecording, mobile: stopMediaProjectionRecording, mobile: injectEmulatorCameraImage, mobile: isMediaProjectionRecordingRunning'
+   /// </summary>
+
 
    [TestMethod]
    public void _01CounterButton_IncrementsValue()
@@ -47,27 +51,44 @@ public class AndroidTests : TestBase_Android
    {
       Task.Delay(5000).Wait(); // Wait for the click to register and show up on the screenshot
 
-      var width = 1080;
-      var height = 2400;
-      var startX = width / 2;
-      var startY = 1790;
+      var width = Driver.DisplaySize().Width;    // 1080
+      var height = Driver.DisplaySize().Height;  // 2400
 
-      // https://deepwiki.com/appium/appium-uiautomator2-driver/3.2-gesture-commands
-      // Tap at specific coordinates 
-      var args = new Dictionary<string, object>
+      var startX = width / 2;
+      var startY = 1790;                         // 1790 
+
+      var displayDensity = Driver.DisplayDensity(); // 420
+
+
+      if( Driver.IsAppInstalled() )
       {
-         { "x", startX },
-         { "y", startY }
+         Driver.TerminateApp();
+      }
+
+      if (Driver.ActivateApp())
+      {
+         Task.Delay(4000).Wait(); // Wait for the click to register and show up on the screenshot     
+      }
+      else
+      {
       };
 
-      // Example 1: Get window size using ExecuteScript
-      var sizeResult = Driver.ExecuteScript("mobile: getWindowSize");
 
-      Driver.ExecuteScript("mobile: clickGesture", args);
-      Task.Delay(50).Wait(); // Wait for the click to register and show up on the screenshot
+      {
+         // https://deepwiki.com/appium/appium-uiautomator2-driver/3.2-gesture-commands
+         // Tap at specific coordinates 
+         var args = new Dictionary<string, object>
+         {
+            { "x", startX },
+            { "y", startY }
+         };
 
-      Driver.ExecuteScript("mobile: clickGesture", args);
-      Task.Delay(50).Wait(); // Wait for the click to register and show up on the screenshot
+         Driver.ExecuteScript("mobile: clickGesture", args);
+         Task.Delay(50).Wait(); // Wait for the click to register and show up on the screenshot
+
+         Driver.ExecuteScript("mobile: clickGesture", args);
+         Task.Delay(50).Wait(); // Wait for the click to register and show up on the screenshot
+      }
 
       var button = Driver.FindUIElement("CounterBtn");
       Assert.AreEqual("Clicked 2 times", button.Text);
