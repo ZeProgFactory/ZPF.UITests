@@ -67,7 +67,7 @@ public class AndroidTests : TestBase_Android
 
       if (Driver.ActivateApp())
       {
-         Task.Delay(4000).Wait(); // Wait for the click to register and show up on the screenshot     
+         Task.Delay(4000).Wait(); // Wait for the UI to update
       }
       else
       {
