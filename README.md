@@ -11,7 +11,8 @@ ZPF.UITests is a starter nuget for MSTest and Appium. It provides a simple and e
 ![NuGet Downloads](https://img.shields.io/nuget/v/ZPF.UITests) &nbsp;
 ![NuGet Downloads](https://img.shields.io/nuget/dt/ZPF.UITests) &nbsp;
 ![GitHub License](https://img.shields.io/github/license/ZeProgFactory/ZPF.UITests) &nbsp;
-![last commit](https://img.shields.io/github/last-commit/ZeProgFactory/ZPF.UITests) 
+![last commit](https://img.shields.io/github/last-commit/ZeProgFactory/ZPF.UITests) &nbsp;
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ZeProgFactory/ZPF.UITests)
 
 | Platform  | Android | iOS  |  Mac  |  Linux  | Windows |
 | :-------- | :-----: | :--: | :---: | :-----: | :-----: |
