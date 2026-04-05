@@ -17,7 +17,7 @@ ZPF.UITests is a starter nuget for MSTest and Appium. It provides a simple and e
 | Platform  | Android | iOS  |  Mac  |  Linux  | Windows |
 | :-------- | :-----: | :--: | :---: | :-----: | :-----: |
 | Host      |   ❌    |  ❌  |  🚧  |   ✅    |   ✅   |
-| Tested    |   ✅    |  🚧  |  🚧  |   ✅    |   ✅   |
+| Tested    |   ✅    |  🚧  |  🚧  |   ❌    |   ✅   |
 
 ✅ tested and working  
 🚧 in progress, could be working but not tested yet  
