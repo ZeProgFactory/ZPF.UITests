@@ -1,4 +1,5 @@
-﻿using ZPF;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ZPF;
 using ZPF.UITests;
 
 namespace ZPF.UITests;

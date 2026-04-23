@@ -15,8 +15,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MSTest.TestAdapter" Version="4.2.1" />
-    <PackageReference Include="MSTest.TestFramework" Version="4.2.1" />
+     <PackageReference Update="MSTest.TestAdapter" Version="4.1.0" />
+     <PackageReference Update="MSTest.TestFramework" Version="4.1.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="ReadMe.md">
@@ -45,6 +45,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Appium.WebDriver" Version="8.2.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.1.0" />
     <PackageReference Include="SkiaSharp" Version="3.119.2" />
     <PackageReference Include="ZPF_Basics" Version="2.1.1.17" />
   </ItemGroup>

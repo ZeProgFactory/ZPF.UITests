@@ -5,8 +5,8 @@ using OpenQA.Selenium.Appium.Enums;
 using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Appium.Mac;
 using OpenQA.Selenium.Appium.Windows;
-using OpenQA.Selenium.Internal;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
+//using OpenQA.Selenium.Internal;
+//using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace ZPF.UITests;
 
