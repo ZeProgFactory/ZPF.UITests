@@ -45,6 +45,26 @@ public static class AppiumExtensions_Android
    }
 
 
+   public static bool RemoveApp(this AppiumDriver driver)
+   {
+      try
+      {
+         var args = new Dictionary<string, object>
+         {
+             { "appId", UITestViewModel.Current.Config.PackageID }
+         };
+
+         driver.ExecuteScript("mobile: removeApp", args);
+
+         return true;
+      }
+      catch
+      {
+         return false;
+      }
+   }
+
+
    public static bool ActivateApp(this AppiumDriver driver)
    {
       try
