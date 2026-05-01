@@ -7,6 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+   <ItemGroup>
+      <PackageReference Include="MSTest" Version="4.0.2"/>
+   </ItemGroup>
+   
   <ItemGroup>
     <PackageReference Include="Appium.WebDriver" Version="8.2.0" />
     <PackageReference Include="ZPF_Basics" Version="2.1.1.17" />
