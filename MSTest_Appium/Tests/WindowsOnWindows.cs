@@ -6,9 +6,9 @@ using ZPF.UITests;
 namespace MauiApp.UITests;
 
 [TestClass]
-public class MacTests : TestBase_Mac
+public class WindowsOnWindows : TestBase_Windows
 {
-   public MacTests() : base()
+   public WindowsOnWindows() : base()
    {
       // Constructor for this test class
 
@@ -23,10 +23,9 @@ public class MacTests : TestBase_Mac
       // Global setup for this test class
 
       // 1)
-      UITestViewModel.Current.Config.TestResults = @"/Volumes/Data/Gitware/Nugets/UITests/TestResults/Mac/";
-      UITestViewModel.Current.Config.BundleID_OSX = "com.companyname.maui";
-      UITestViewModel.Current.Config.APP_OSX = "/Volumes/Data/Gitware/Nugets/UITests/Maui/bin/Debug/net10.0-maccatalyst/maccatalyst-arm64/Maui.app";
-            
+      UITestViewModel.Current.Config.TestResults = @"D:\GitWare\Nugets\ZPF_UITests\TestResults\Win\";
+      UITestViewModel.Current.Config.APP_WIN = @"D:\GitWare\Nugets\ZPF_UITests\Maui\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Maui.exe";
+
       UITestViewModel.Current.Config.GroupSessionInFolder = true;
       UITestViewModel.Current.Config.FolderNamingStrategy = FolderNamingStrategies.PrevCurrent;
       UITestViewModel.Current.Config.CompareBeforeAfter = true;

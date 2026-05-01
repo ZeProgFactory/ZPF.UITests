@@ -7,7 +7,7 @@ using ZPF.UITests;
 namespace MauiApp.UITests;
 
 [TestClass]
-public class AndroidTests : TestBase_Android
+public class DroidOnWindows : TestBase_Android
 {
    // Runs once before all tests in this class
    [ClassInitialize]

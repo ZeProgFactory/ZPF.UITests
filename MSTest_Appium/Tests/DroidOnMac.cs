@@ -6,9 +6,9 @@ using ZPF.UITests;
 namespace MauiApp.UITests;
 
 [TestClass]
-public class WindowsTests : TestBase_Windows
+public class DroidOnMac : TestBase_Mac
 {
-   public WindowsTests() : base()
+   public DroidOnMac() : base()
    {
       // Constructor for this test class
 
@@ -23,9 +23,11 @@ public class WindowsTests : TestBase_Windows
       // Global setup for this test class
 
       // 1)
-      UITestViewModel.Current.Config.TestResults = @"D:\GitWare\Nugets\ZPF_UITests\TestResults\Win\";
-      UITestViewModel.Current.Config.APP_WIN = @"D:\GitWare\Nugets\ZPF_UITests\Maui\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Maui.exe";
-
+      UITestViewModel.Current.Config.TestResults = @"/Volumes/Data/Gitware/Nugets/UITests/TestResults/Droid/";
+      UITestViewModel.Current.Config.AndroidDeviceName = "pixel_7_-_api_36_0"; // or your device name
+      //UITestViewModel.Current.Config.APK = @"D:\GitWare\Nugets\ZPF_UITests\TestApps\com.companyname.maui.apk";
+      UITestViewModel.Current.Config.PackageID = "com.companyname.maui";
+      
       UITestViewModel.Current.Config.GroupSessionInFolder = true;
       UITestViewModel.Current.Config.FolderNamingStrategy = FolderNamingStrategies.PrevCurrent;
       UITestViewModel.Current.Config.CompareBeforeAfter = true;

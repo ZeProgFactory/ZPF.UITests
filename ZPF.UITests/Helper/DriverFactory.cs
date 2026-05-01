@@ -18,7 +18,7 @@ public static class DriverFactory
    {
       if (!IsRunningEmulator())
       {
-         StartEmulator();
+         StartDroidEmulator();
 
          Thread.Sleep(2500);
       }
@@ -61,7 +61,7 @@ public static class DriverFactory
    {
       if (!IsRunningEmulator())
       {
-         StartEmulator();
+         StartDroidEmulator();
 
          Thread.Sleep(2500);
       }
@@ -106,7 +106,7 @@ public static class DriverFactory
    {
       if (!IsRunningEmulator())
       {
-         StartEmulator();
+         StartDroidEmulator();
 
          Thread.Sleep(3000);
       }
@@ -239,16 +239,47 @@ public static class DriverFactory
    }
 
 
-   private static void StartEmulator()
+   private static void StartDroidEmulator()
    {
-      new Process
+      if( OperatingSystem.IsWindows())
       {
-         StartInfo = new ProcessStartInfo(@"C:\Program Files (x86)\Android\android-sdk\emulator\emulator.exe")
+         new Process
          {
-            Arguments = $"-avd {UITestViewModel.Current.Config.AndroidDeviceName}",
-            UseShellExecute = true
-         }
-      }.Start();
+            StartInfo = new ProcessStartInfo(@"C:\Program Files (x86)\Android\android-sdk\emulator\emulator.exe")
+            {
+               Arguments = $"-avd {UITestViewModel.Current.Config.AndroidDeviceName}",
+               UseShellExecute = true
+            }
+         }.Start();
+      }
+      else if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS())
+      {
+         var p = new Process
+         {
+            StartInfo = new ProcessStartInfo(@"/Users/Shared/Android/sdk/emulator/emulator")
+            {
+               Arguments = $"-avd {UITestViewModel.Current.Config.AndroidDeviceName}",
+               UseShellExecute = true
+            }
+         }.Start();
+         
+         Debugger.Break(); 
+      }
+      else if (OperatingSystem.IsLinux())
+      {
+         new Process
+         {
+            StartInfo = new ProcessStartInfo(@"/home/user/Android/Sdk/emulator/emulator")
+            {
+               Arguments = $"-avd {UITestViewModel.Current.Config.AndroidDeviceName}",
+               UseShellExecute = true
+            }
+         }.Start();
+      }
+      else
+      {
+         Debugger.Break(); // Unsupported platform - please implement emulator startup for this OS
+      }
    }
 
    // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
