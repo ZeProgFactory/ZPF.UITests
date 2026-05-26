@@ -241,6 +241,8 @@ public static class DriverFactory
 
    private static void StartDroidEmulator()
    {
+      var sdkRoot = GetAndroidSdkRoot();
+      
       if( OperatingSystem.IsWindows())
       {
          new Process
@@ -256,14 +258,14 @@ public static class DriverFactory
       {
          var p = new Process
          {
-            StartInfo = new ProcessStartInfo(@"/Users/Shared/Android/sdk/emulator/emulator")
+            StartInfo = new ProcessStartInfo(sdkRoot + @"/emulator/emulator")
             {
-               Arguments = $"-avd {UITestViewModel.Current.Config.AndroidDeviceName}",
+               Arguments = $"@{UITestViewModel.Current.Config.AndroidDeviceName}",
                UseShellExecute = true
             }
          }.Start();
          
-         Debugger.Break(); 
+         //Debugger.Break(); 
       }
       else if (OperatingSystem.IsLinux())
       {
@@ -282,6 +284,54 @@ public static class DriverFactory
       }
    }
 
+   // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
+
+   private static string GetAndroidSdkRoot()
+   {
+      if (OperatingSystem.IsWindows())
+         return @"C:\Program Files (x86)\Android\android-sdk";
+
+      if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+      {
+         string[] candidates =
+         {
+            @"/Users/michael/Library/Developer/Xamarin/android-sdk-macosx",
+            @"/Users/Shared/Android/sdk"
+         };
+
+         foreach (var path in candidates)
+         {
+            if (Directory.Exists(path))
+               return path;
+         }
+
+         return candidates[0];
+      }
+
+      if (OperatingSystem.IsLinux())
+         return @"/home/user/Android/Sdk";
+
+      throw new PlatformNotSupportedException("Unsupported platform for Android SDK lookup.");
+   }
+
+   private static string GetEmulatorPath()
+   {
+      var sdkRoot = GetAndroidSdkRoot();
+
+      return OperatingSystem.IsWindows()
+         ? Path.Combine(sdkRoot, "emulator", "emulator.exe")
+         : Path.Combine(sdkRoot, "emulator", "emulator");
+   }
+
+   private static string GetAdbPath()
+   {
+      var sdkRoot = GetAndroidSdkRoot();
+
+      return OperatingSystem.IsWindows()
+         ? Path.Combine(sdkRoot, "platform-tools", "adb.exe")
+         : Path.Combine(sdkRoot, "platform-tools", "adb");
+   }
+   
    // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
 
    private const string AdbPath = @"C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe";
