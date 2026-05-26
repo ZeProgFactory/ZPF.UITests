@@ -15,10 +15,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-     <PackageReference Update="MSTest.TestAdapter" Version="4.1.0" />
-     <PackageReference Update="MSTest.TestFramework" Version="4.1.0" />
-  </ItemGroup>
-  <ItemGroup>
     <None Update="ReadMe.md">
       <PackagePath>\</PackagePath>
       <Pack>True</Pack>
