@@ -20,11 +20,22 @@ public class DroidOnMac : TestBase_Mac
    [ClassInitialize]
    public static void ClassInit(TestContext context)
    {
-      // Global setup for this test class
+       // Global setup for this test class
 
+      /*
+Install Android Studio
+Install Android SDK & Images
+Install Emulator
+
+Generate AVD:
+avdmanager create avd -n pixel_7_-_api_33_0 -k 'system-images;android-34;google_apis_playstore;arm64-v8a' -d pixel_7
+
+To check:
+avdmanager list avd 
+*/      
       // 1)
       UITestViewModel.Current.Config.TestResults = @"/Volumes/Data/Gitware/Nugets/UITests/TestResults/Droid/";
-      UITestViewModel.Current.Config.AndroidDeviceName = "Pixel_6_Pro_API_34_PlayStore_ARM"; // or your device name
+      UITestViewModel.Current.Config.AndroidDeviceName = "pixel_7_-_api_36_0"; // or your device name
       //UITestViewModel.Current.Config.APK = @"D:\GitWare\Nugets\ZPF_UITests\TestApps\com.companyname.maui.apk";
       UITestViewModel.Current.Config.PackageID = "com.companyname.maui";
       
