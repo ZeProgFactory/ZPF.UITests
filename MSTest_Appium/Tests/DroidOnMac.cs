@@ -24,7 +24,7 @@ public class DroidOnMac : TestBase_Mac
 
       // 1)
       UITestViewModel.Current.Config.TestResults = @"/Volumes/Data/Gitware/Nugets/UITests/TestResults/Droid/";
-      UITestViewModel.Current.Config.AndroidDeviceName = "pixel_7_-_api_36_0"; // or your device name
+      UITestViewModel.Current.Config.AndroidDeviceName = "pixel_5_-_api_33"; // or your device name
       //UITestViewModel.Current.Config.APK = @"D:\GitWare\Nugets\ZPF_UITests\TestApps\com.companyname.maui.apk";
       UITestViewModel.Current.Config.PackageID = "com.companyname.maui";
       

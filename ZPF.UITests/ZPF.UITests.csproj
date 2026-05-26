@@ -45,8 +45,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Appium.WebDriver" Version="8.2.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="4.1.0" />
-    <PackageReference Include="SkiaSharp" Version="3.119.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.2.3" />
+    <PackageReference Include="SkiaSharp" Version="3.119.4" />
     <PackageReference Include="ZPF_Basics" Version="2.1.1.17" />
   </ItemGroup>
 </Project>
