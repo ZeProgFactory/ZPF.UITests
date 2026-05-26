@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSTest.Sdk/4.1">
+﻿<Project Sdk="MSTest.Sdk/4.1.0">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -21,19 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.Testing.Extensions.CodeCoverage" Version="18.7.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Microsoft.Testing.Extensions.TrxReport" Version="2.2.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="MSTest.TestAdapter" Version="4.2.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="MSTest.TestFramework" Version="4.2.3" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.7.0" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.2.3" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.2.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.2.3" />
   </ItemGroup>
 
 </Project>
