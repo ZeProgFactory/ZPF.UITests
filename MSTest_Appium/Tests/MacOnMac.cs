@@ -6,9 +6,9 @@ using ZPF.UITests;
 namespace MauiApp.UITests;
 
 [TestClass]
-public class DroidOnMac : TestBase_Android
+public class MacOnMac : TestBase_Mac
 {
-   public DroidOnMac() : base()
+   public MacOnMac() : base()
    {
       // Constructor for this test class
 
@@ -37,14 +37,17 @@ avdmanager list avd
 */      
       // 1)
       UITestViewModel.Current.Config.TestResults = @"/Volumes/Data/Gitware/Nugets/UITests/TestResults/Droid/";
-      UITestViewModel.Current.Config.AndroidDeviceName = "Pixel_7"; // or your device name
-      UITestViewModel.Current.Config.APK = @"/Volumes/Data/Gitware/Nugets/UITests/TestApps/com.companyname.maui.apk";
+      //UITestViewModel.Current.Config.AndroidDeviceName = "Pixel_7"; // or your device name
+      //UITestViewModel.Current.Config.APK = @"/Volumes/Data/Gitware/Nugets/UITests/TestApps/com.companyname.maui.apk";
       UITestViewModel.Current.Config.PackageID = "com.companyname.maui";
       
       UITestViewModel.Current.Config.GroupSessionInFolder = true;
       UITestViewModel.Current.Config.FolderNamingStrategy = FolderNamingStrategies.PrevCurrent;
       UITestViewModel.Current.Config.CompareBeforeAfter = true;
       UITestViewModel.Current.Config.CapturePageSource = true;
+      
+      UITestViewModel.Current.Config.BundleID_OSX = "com.companyname.maui";
+      //UITestViewModel.Current.Config.APP_OSX = "/path/to/TheApp.app";
    }
 
 

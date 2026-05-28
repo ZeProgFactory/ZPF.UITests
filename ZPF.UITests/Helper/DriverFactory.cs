@@ -20,18 +20,10 @@ public static class DriverFactory
       {
          StartDroidEmulator();
 
-         Thread.Sleep(2500);
+         Thread.Sleep(TimeSpan.FromSeconds(10)); // Wait for the emulator to fully boot up
       }
 
-      // 1. Start Appium if not running
-      if (!IsPortOpen(UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
-      {
-         // Choose one:
-         StartAppium();
-
-         // Wait for server to be ready
-         Thread.Sleep(3000);
-      }
+      EnsureAppiumRunning();
 
       // 2. Configure Appium options
       var options = new AppiumOptions
@@ -66,15 +58,7 @@ public static class DriverFactory
          Thread.Sleep(2500);
       }
 
-      // 1. Start Appium if not running
-      if (!IsPortOpen(UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
-      {
-         // Choose one:
-         StartAppium();
-
-         // Wait for server to be ready
-         Thread.Sleep(3000);
-      }
+      EnsureAppiumRunning();
 
       // 2. Configure Appium options
       var options = new AppiumOptions
@@ -114,15 +98,7 @@ public static class DriverFactory
       // 0. Ensure the device is authorized for ADB debugging
       WaitForDeviceAuthorized();
 
-      // 1. Start Appium if not running
-      if (!IsPortOpen(UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
-      {
-         // Choose one:
-         StartAppium();
-
-         // Wait for server to be ready
-         Thread.Sleep(4000);
-      }
+      EnsureAppiumRunning();
 
       // 2. Configure Appium options
       var options = new AppiumOptions
@@ -178,15 +154,7 @@ public static class DriverFactory
 
    public static WindowsDriver CreateWindowsDriver()
    {
-      // 1. Start Appium if not running
-      if (!IsPortOpen(UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
-      {
-         // Choose one:
-         StartAppium();
-
-         // Wait for server to be ready
-         Thread.Sleep(2500);
-      }
+      EnsureAppiumRunning();
 
       // 2. Configure Appium options
       var options = new AppiumOptions();
@@ -202,6 +170,33 @@ public static class DriverFactory
 
    private static void StartAppium()
    {
+      /*
+      
+      # Install appium
+       
+      Go to https://nodejs.org/
+      Download and install the latest stable version of node.js package in your mac
+      
+      sudo chown -R $(whoami) /usr/local/lib/node_modules
+      sudo chown -R $(whoami) /usr/local/bin
+               
+      npm install -g appium
+         
+      # install the Android SDK manually
+      https://learn.microsoft.com/en-us/java/openjdk/download#openjdk-21
+      
+      For Rider on macOS with Microsoft OpenJDK, set the Java SDK path to:
+      /Library/Java/JavaVirtualMachines/microsoft-<version>.jdk/Contents/Home
+         
+      sudo rm -rf ~/.npm/_cacache
+      npm cache verify
+         
+      appium driver install mac2
+      
+      appium driver install uiautomator2
+         
+      */
+      
       new Process
       {
          StartInfo = new ProcessStartInfo(@"appium")
@@ -221,12 +216,53 @@ public static class DriverFactory
          using var client = new System.Net.Sockets.TcpClient();
          var result = client.BeginConnect(host, port, null, null);
          var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(300));
-         return success;
+
+         if (!success)
+         {
+            return false;
+         }
+
+         client.EndConnect(result);
+         return true;
       }
       catch
       {
          return false;
       }
+   }
+
+   private static void EnsureAppiumRunning()
+   {
+      if (IsPortOpen(UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port))
+      {
+         return;
+      }
+
+      StartAppium();
+
+      if (!WaitForPortOpen(UITestViewModel.Current.Config.host, UITestViewModel.Current.Config.port, TimeSpan.FromSeconds(30)))
+      {
+         throw new InvalidOperationException(
+            $"Appium server did not start on {UITestViewModel.Current.Config.host}:{UITestViewModel.Current.Config.port}. "
+            + "Start Appium manually and ensure it is reachable before running UI tests.");
+      }
+   }
+
+   private static bool WaitForPortOpen(string host, int port, TimeSpan timeout)
+   {
+      var sw = Stopwatch.StartNew();
+
+      while (sw.Elapsed < timeout)
+      {
+         if (IsPortOpen(host, port))
+         {
+            return true;
+         }
+
+         Thread.Sleep(500);
+      }
+
+      return false;
    }
 
    // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
@@ -256,16 +292,25 @@ public static class DriverFactory
       }
       else if (OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS())
       {
+         /*
+            # Change to the Android SDK directory
+            cd ~/Library/Android/sdk/emulator
+                        
+            # List the available AVDs
+            ./emulator -list-avds
+                        
+            # Launch the chosen AVD
+            ./emulator -avd "avd name"
+         */
+         
          var p = new Process
          {
-            StartInfo = new ProcessStartInfo(sdkRoot + @"/emulator/emulator")
+            StartInfo = new ProcessStartInfo( GetEmulatorPath() )
             {
                Arguments = $"@{UITestViewModel.Current.Config.AndroidDeviceName}",
                UseShellExecute = true
             }
          }.Start();
-         
-         //Debugger.Break(); 
       }
       else if (OperatingSystem.IsLinux())
       {
@@ -295,7 +340,7 @@ public static class DriverFactory
       {
          string[] candidates =
          {
-            @"/Users/michael/Library/Developer/Xamarin/android-sdk-macosx",
+            @$"/Users/{Environment.UserName}/Library/Developer/Xamarin/android-sdk-macosx",
             @"/Users/Shared/Android/sdk"
          };
 
@@ -318,6 +363,11 @@ public static class DriverFactory
    {
       var sdkRoot = GetAndroidSdkRoot();
 
+      if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+      {
+         return @$"/Users/{Environment.UserName}/Library/Android/sdk/emulator/emulator";
+      }
+      
       return OperatingSystem.IsWindows()
          ? Path.Combine(sdkRoot, "emulator", "emulator.exe")
          : Path.Combine(sdkRoot, "emulator", "emulator");
