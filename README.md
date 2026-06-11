@@ -2,8 +2,7 @@
 
 ZPF.UITests is a starter nuget for MSTest and Appium. It provides a simple and efficient way to set up and run UI tests for your applications. With ZPF.UITests, you can quickly create and execute tests that interact with your application's user interface, ensuring that your app works as expected across different devices and platforms.
 
-
-# !!! doc under construction !!!
+# !!! under construction !!!
 
 
 ---   
@@ -14,10 +13,24 @@ ZPF.UITests is a starter nuget for MSTest and Appium. It provides a simple and e
 ![last commit](https://img.shields.io/github/last-commit/ZeProgFactory/ZPF.UITests) &nbsp;
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ZeProgFactory/ZPF.UITests)
 
-| Platform  | Android | iOS  |  Mac  |  Linux  | Windows |
-| :-------- | :-----: | :--: | :---: | :-----: | :-----: |
-| Host      |   ❌    |  ❌  |  🚧  |   ✅    |   ✅   |
-| Tested    |   ✅    |  🚧  |  🚧  |   ❌    |   ✅   |
+## Sample app tested on:
+| Platform        | Android | iOS |  Mac  |  Linux  | Windows |
+|:----------------| :-----: |:---:| :---: | :-----: | :-----: |
+| Natif           |   ✅    |  ✅  |  ✅  |   🚧    |   ✅   |
+| Emulator on Win |   ✅    | 🚧  |  ❌  |   ❌    |   ❌   |
+| Emulator on Mac |   ✅    | ✅   |  ❌  |   ❌    |   ❌   |
+
+✅ tested and working  
+🚧 in progress, could be working but not tested yet  
+❌ not possible
+&nbsp;
+
+## Appium server hosting and test execution on:
+| Platform        | Android | iOS |  Mac  |  Linux  | Windows |
+|:----------------| :-----: |:---:| :---: | :-----: | :-----: |
+| Appium on Win   |   ✅    | 🚧  |  ❌  |   ❌    |   ✅   |
+| Appium on Mac   |   ✅    |  ✅  |  🚧  |   ❌    |   ❌   |
+| Appium on Linux |   ✅    |  🚧 |  ❌  |   🚧    |   ❌   |
 
 ✅ tested and working  
 🚧 in progress, could be working but not tested yet  
