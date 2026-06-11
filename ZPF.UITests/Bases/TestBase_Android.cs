@@ -12,8 +12,9 @@ public class TestBase_Android : TestBase
    [TestInitialize]
    public void Setup()
    {
-      Driver = DriverFactory.CreateAndroidDriver();
+      // 3)
       
+      Driver = DriverFactory.CreateAndroidDriver();
       UITestViewModel.Current.TestContext = TestContext;
 
       if (UITestViewModel.Current.Config.CompareBeforeAfter)

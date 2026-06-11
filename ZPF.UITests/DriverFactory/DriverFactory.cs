@@ -10,192 +10,13 @@ using OpenQA.Selenium.Appium.Windows;
 
 namespace ZPF.UITests;
 
-public static class DriverFactory
+public static partial class DriverFactory
 {
-   // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
-
-   public static MacDriver CreateMacDriver()
-   {
-      if (!IsRunningEmulator())
-      {
-         StartDroidEmulator();
-
-         Thread.Sleep(TimeSpan.FromSeconds(10)); // Wait for the emulator to fully boot up
-      }
-
-      EnsureAppiumRunning();
-
-      // 2. Configure Appium options
-      var options = new AppiumOptions
-      {
-         // Always Mac for Mac
-         PlatformName = "Mac",
-
-         // Specify mac2 as the driver, typically don't need to change this
-         AutomationName = "mac2",
-
-         // The full path to the .app file to test
-         App = UITestViewModel.Current.Config.APP_OSX,
-      };
-
-      // Setting the Bundle ID is required, else the automation will run on Finder
-      options.AddAdditionalAppiumOption(IOSMobileCapabilityType.BundleId, UITestViewModel.Current.Config.BundleID_OSX);
-
-
-      // 3. Create session
-      var _driver = new MacDriver(new Uri(UITestViewModel.Current.Config.DriverUrl), options);
-
-      return _driver;
-   }
-
-
-   public static IOSDriver CreateIOSDriver()
-   {
-      if (!IsRunningEmulator())
-      {
-         StartDroidEmulator();
-
-         Thread.Sleep(2500);
-      }
-
-      EnsureAppiumRunning();
-
-      // 2. Configure Appium options
-      var options = new AppiumOptions
-      {
-         // Specify XCUITest as the driver, typically don't need to change this
-         AutomationName = "XCUITest",
-
-         // Always iOS for iOS
-         PlatformName = "iOS",
-
-         // iOS Version
-         PlatformVersion = "17.0",
-
-         // Don't specify if you don't want a specific device
-         DeviceName = UITestViewModel.Current.Config.iOSDeviceName,
-
-         // The full path to the .app file to test or the bundle id if the app is already installed on the device
-         App = UITestViewModel.Current.Config.APP_iOS,
-      };
-
-      // 3. Create session
-      var _driver = new IOSDriver(new Uri(UITestViewModel.Current.Config.DriverUrl), options);
-
-      return _driver;
-   }
-
-
-   public static AndroidDriver CreateAndroidDriver()
-   {
-      if (!IsRunningEmulator())
-      {
-         StartDroidEmulator();
-
-         Thread.Sleep(3000);
-      }
-
-      // 0. Ensure the device is authorized for ADB debugging
-      WaitForDeviceAuthorized();
-
-      EnsureAppiumRunning();
-
-      // 2. Configure Appium options
-      var options = new AppiumOptions
-      {
-         // Always Android for Android
-         PlatformName = "Android",
-
-         // Specify UIAutomator2 as the driver, typically don't need to change this
-         AutomationName = "UIAutomator2",
-
-         // This is the Android version, not API level
-         // This is ignored if you use the avd option below
-         // PlatformVersion = "13",
-      };
-
-      if (!string.IsNullOrEmpty(UITestViewModel.Current.Config.APK))
-      {
-         // RELEASE BUILD SETUP
-         // The full path to the .apk file
-         // This only works with release builds because debug builds have fast deployment enabled
-         // and Appium isn't compatible with fast deployment
-
-         // The full path to the .apk file to test or the package name if the app is already installed on the device
-
-         options.App = UITestViewModel.Current.Config.APK;
-
-         // END RELEASE BUILD SETUP
-      }
-      else
-      {
-         // DEBUG BUILD SETUP
-         // If you're running your tests against debug builds you'll need to set NoReset to true
-         // otherwise appium will delete all the libraries used for Fast Deployment on Android
-         // Release builds have Fast Deployment disabled
-         // https://learn.microsoft.com/xamarin/android/deploy-test/building-apps/build-process#fast-deployment
-         options.AddAdditionalAppiumOption(MobileCapabilityType.NoReset, "true");
-         options.AddAdditionalAppiumOption(AndroidMobileCapabilityType.AppPackage, UITestViewModel.Current.Config.PackageID );
-
-         //Make sure to set [Register("com.companyname.basicappiumsample.MainActivity")] on the MainActivity of your android application
-         options.AddAdditionalAppiumOption(AndroidMobileCapabilityType.AppActivity, $"{UITestViewModel.Current.Config.PackageID}.MainActivity");
-         // END DEBUG BUILD SETUP
-      }
-
-      options.DeviceName = UITestViewModel.Current.Config.AndroidDeviceName;
-
-            // 3. Create session
-      var _driver = new AndroidDriver(new Uri(UITestViewModel.Current.Config.DriverUrl), options);
-      _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
-
-      return _driver;
-   }
-
-
-   public static WindowsDriver CreateWindowsDriver()
-   {
-      EnsureAppiumRunning();
-
-      // 2. Configure Appium options
-      var options = new AppiumOptions();
-      options.PlatformName = "Windows";
-      options.AutomationName = "Windows";
-      options.App = UITestViewModel.Current.Config.APP_WIN;
-
-      // 3. Create session
-      return new WindowsDriver(new Uri(UITestViewModel.Current.Config.DriverUrl), options);
-   }
-
-   // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
+    // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
 
    private static void StartAppium()
    {
-      /*
-      
-      # Install appium
-       
-      Go to https://nodejs.org/
-      Download and install the latest stable version of node.js package in your mac
-      
-      sudo chown -R $(whoami) /usr/local/lib/node_modules
-      sudo chown -R $(whoami) /usr/local/bin
-               
-      npm install -g appium
-         
-      # install the Android SDK manually
-      https://learn.microsoft.com/en-us/java/openjdk/download#openjdk-21
-      
-      For Rider on macOS with Microsoft OpenJDK, set the Java SDK path to:
-      /Library/Java/JavaVirtualMachines/microsoft-<version>.jdk/Contents/Home
-         
-      sudo rm -rf ~/.npm/_cacache
-      npm cache verify
-         
-      appium driver install mac2
-      
-      appium driver install uiautomator2
-         
-      */
+
       
       new Process
       {
@@ -373,6 +194,10 @@ public static class DriverFactory
          : Path.Combine(sdkRoot, "emulator", "emulator");
    }
 
+   // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
+
+   private const string AdbPath = @"C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe";
+
    private static string GetAdbPath()
    {
       var sdkRoot = GetAndroidSdkRoot();
@@ -384,9 +209,6 @@ public static class DriverFactory
    
    // - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -  - -
 
-   private const string AdbPath = @"C:\Program Files (x86)\Android\android-sdk\platform-tools\adb.exe";
-
-   /// <summary>
    /// Waits for at least one ADB device to be in the "device" (authorized) state.
    /// If the device is in the "unauthorized" state, attempts adb kill-server / start-server
    /// to trigger a new authorization prompt on the device, then retries.

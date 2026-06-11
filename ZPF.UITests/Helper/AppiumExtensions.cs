@@ -46,7 +46,4 @@ public static class AppiumExtensions
          return null;
       }
    }
-
-
-
 }

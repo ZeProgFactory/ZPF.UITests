@@ -15,6 +15,8 @@ public class TestBase_Mac : TestBase
    [TestInitialize]
    public void Setup()
    {
+      // 3)
+      
       Driver = DriverFactory.CreateMacDriver();
       UITestViewModel.Current.TestContext = TestContext;
 

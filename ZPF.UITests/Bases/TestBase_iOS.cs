@@ -11,6 +11,8 @@ public class TestBase_iOS : TestBase
    [TestInitialize]
    public void Setup()
    {
+      // 3)
+      
       Driver = DriverFactory.CreateIOSDriver();
       UITestViewModel.Current.TestContext = TestContext;
 
