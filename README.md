@@ -570,4 +570,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Made with ❤️ by [ZeProgFactory](https://github.com/ZeProgFactory)
+Made with a bit of AI and a lots of coffee by [ZeProgFactory](https://github.com/ZeProgFactory)
