@@ -40,9 +40,9 @@
     <Version>0.0.90</Version>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Appium.WebDriver" Version="8.3.1" />
+    <PackageReference Include="Appium.WebDriver" Version="8.3.2" />
     <PackageReference Include="MSTest.TestFramework" Version="4.3.2" />
     <PackageReference Include="SkiaSharp" Version="3.119.4" />
-    <PackageReference Include="ZPF_Basics" Version="2.1.1.17" />
+    <PackageReference Include="ZPF_Basics" Version="2.1.1.20" />
   </ItemGroup>
 </Project>
