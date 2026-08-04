@@ -1,10 +1,13 @@
 <Solution>
+  <Folder Name="/Appium/">
+    <File Path="ReadMe.Appium.md" />
+    <Project Path="MSTest_Appium/MSTest_Appium.csproj" />
+    <Project Path="ZPF.UITests/ZPF.UITests.csproj" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
   </Folder>
   <Project Path="Maui/Maui.csproj">
     <Deploy />
   </Project>
-  <Project Path="MSTest_Appium/MSTest_Appium.csproj" />
-  <Project Path="ZPF.UITests/ZPF.UITests.csproj" />
 </Solution>

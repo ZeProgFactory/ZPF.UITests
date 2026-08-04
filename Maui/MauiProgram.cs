@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+#if DEBUG
+using Microsoft.Maui.DevFlow.Agent;
+#endif
 
 namespace Maui
 {
@@ -17,6 +20,9 @@ namespace Maui
 
 #if DEBUG
    		builder.Logging.AddDebug();
+#endif
+#if DEBUG
+         builder.AddMauiDevFlowAgent();
 #endif
 
          return builder.Build();
