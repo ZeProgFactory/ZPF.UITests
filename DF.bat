@@ -1,7 +1,9 @@
+@rem 
+@rem  Windows --> Windows
+@rem 
 
 dotnet clean Maui\Maui.csproj
-@rem dotnet run --project Maui\Maui.csproj --configuration Debug --framework net10.0-windows10.0.19041.0 --verbosity minimal  
-dotnet build --project Maui\Maui.csproj --configuration Debug -f net10.0-windows10.0.19041.0 -t:Run
+start dotnet run --project Maui\Maui.csproj --configuration Debug --framework net10.0-windows10.0.19041.0 --verbosity minimal  
 
 @if %ERRORLEVEL% neq 0 (
     @echo *** Publish failed with error level %ERRORLEVEL% ***
