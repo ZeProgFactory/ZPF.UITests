@@ -5,6 +5,7 @@
     <Project Path="ZPF.UITests/ZPF.UITests.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
+    <File Path="DF.bat" />
     <File Path="README.md" />
   </Folder>
   <Project Path="Maui/Maui.csproj">

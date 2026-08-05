@@ -5,6 +5,9 @@ ZPF.UITests is a starter nuget for MSTest and Appium. It provides a simple and e
 # !!! under construction !!!
 
 # !!! ??? DevFlow ??? !!!
+https://mauidevflow.net/
+https://learn.microsoft.com/en-us/dotnet/maui/developer-tools/?view=net-maui-10.0
+
 
 
 <PackageReference Include="Microsoft.Maui.DevFlow.Agent" Version="0.1.0-preview.12.26368.2" />
@@ -22,6 +25,9 @@ builder.AddMauiDevFlowAgent();
 
 dotnet tool install -g Microsoft.Maui.Cli --prerelease
 
-maui devflow MAUI tree
+maui devflow broker start
+maui devflow wait
 
-maui devflow agent interact tap --automationid "CounterBtn"
+maui devflow ui tree --depth 3 --fields "id,type,text,automationId"
+
+maui devflow ui tap --automationId "CounterBtn"
