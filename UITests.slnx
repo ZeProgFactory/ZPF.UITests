@@ -6,6 +6,8 @@
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="DF.bat" />
+    <File Path="DF.Windows-Windows.bat" />
+    <File Path="df2.bat" />
     <File Path="README.md" />
   </Folder>
   <Project Path="Maui/Maui.csproj">
