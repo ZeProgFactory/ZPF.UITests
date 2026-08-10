@@ -10,6 +10,9 @@
     <File Path="df2.bat" />
     <File Path="README.md" />
   </Folder>
+  <Project Path="DevFlowMonitor/DevFlowMonitor.csproj" Id="4fa8cd29-bfba-469f-bb7e-4bf77f43c82d">
+    <Deploy Solution="Debug|*" />
+  </Project>
   <Project Path="Maui/Maui.csproj">
     <Deploy />
   </Project>

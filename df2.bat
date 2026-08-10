@@ -7,7 +7,7 @@ start "" cmd /c "\"%ANDROID_HOME%\emulator\emulator.exe\" -avd pixel_7_-_api_36_
 
 echo === Waiting for emulator to appear ===
 :wait_device
-adb devices | findstr "emulator-5554" >nul
+"%ANDROID_HOME%\platform-tools\adb.exe" devices | findstr "emulator-5554" >nul
 if errorlevel 1 (
     echo Emulator not ready yet...
     timeout /t 1 >nul
@@ -26,6 +26,8 @@ goto bootcheck
 :bootready
 echo Android boot completed.
 
+pause
+
 echo === Building MAUI app with DevTools ===
 dotnet build -t:Run -f net8.0-android -p:EnableMauiDevTools=true -p:Configuration=Debug
 if errorlevel 1 (
@@ -34,7 +36,7 @@ if errorlevel 1 (
 )
 
 echo === Locating APK ===
-for /f "tokens=*" %%a in ('dir /b /s bin\Debug\net8.0-android\*.apk') do set apk=%%a
+for /f "tokens=*" %%a in ('dir /b /s bin\Debug\net10.0-android\*.apk') do set apk=%%a
 echo APK found: %apk%
 
 echo === Installing APK ===
