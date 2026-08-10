@@ -1,11 +1,14 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace DevFlowMonitor
 {
-   public partial class MainPage : ContentPage
+   public partial class MainPage : ContentPage, INotifyPropertyChanged
    {
       private const int BrokerPort = 19223;
       private const int PollIntervalMs = 5_000;
@@ -27,6 +30,23 @@ namespace DevFlowMonitor
       private string? _lastScreenshotPath;
 
       public ObservableCollection<DevFlowAgent> Agents { get; } = [];
+      public ObservableCollection<TreeNodeItem> TreeItems { get; } = [];
+
+      private TreeNodeItem? _selectedTreeNode;
+      public TreeNodeItem? SelectedTreeNode
+      {
+         get => _selectedTreeNode;
+         set
+         {
+            _selectedTreeNode = value;
+            OnPropertyChanged();
+            NodeDetailFrame.IsVisible = value is not null;
+         }
+      }
+
+      public event PropertyChangedEventHandler? PropertyChanged;
+      private void OnPropertyChanged([CallerMemberName] string? name = null)
+         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
       public MainPage()
       {
@@ -229,7 +249,7 @@ namespace DevFlowMonitor
          if (_selectedAgent is null) return;
 
          SetBusy(true, "Taking screenshot…");
-         TreeScroll.IsVisible = false;
+         TreeColumn.IsVisible = false;
 
          try
          {
@@ -278,23 +298,28 @@ namespace DevFlowMonitor
 
          try
          {
-            //var (exitCode, stdout, stderr) = await RunDevFlowAsync(
-            //   "ui tree --depth 3 --fields id,type,text,automationId",
-            //   _selectedAgent);
-
             var (exitCode, stdout, stderr) = await RunDevFlowAsync(
-               "ui tree",
+               "ui tree --depth 0",
                _selectedAgent);
 
             if (exitCode == 0 && stdout.Length > 0)
             {
-               TreeEditor.Text = stdout;
-               TreeScroll.IsVisible = true;
-               ActionStatusLabel.Text = "Visual tree loaded";
+               var roots = JsonSerializer.Deserialize(
+                  stdout, DevFlowJsonContext.Default.ListTreeNode);
+
+               TreeItems.Clear();
+               SelectedTreeNode = null;
+               if (roots is { Count: > 0 })
+               {
+                  foreach (var root in roots)
+                     FlattenTree(root, 0, expandDepth: 1);
+               }
+               TreeColumn.IsVisible = true;
+               ActionStatusLabel.Text = $"Tree loaded — {TreeItems.Count} nodes";
             }
             else
             {
-               TreeScroll.IsVisible = false;
+               TreeColumn.IsVisible = false;
                ActionStatusLabel.Text = $"Tree failed: {stderr.Trim()}";
             }
          }
@@ -371,6 +396,57 @@ namespace DevFlowMonitor
 #endif
       }
 
+      // ── Tree expand / collapse / selection ──────────────────────────────────
+
+      private void OnTreeNodeSelected(object? sender, SelectionChangedEventArgs e)
+         => SelectedTreeNode = e.CurrentSelection.FirstOrDefault() as TreeNodeItem;
+
+      private void OnExpandToggled(object? sender, TappedEventArgs e)
+      {
+         if (e.Parameter is not TreeNodeItem item || !item.HasChildren) return;
+         if (item.IsExpanded) CollapseNode(item);
+         else ExpandNode(item);
+      }
+
+      /// <summary>Inserts the immediate children of <paramref name="item"/> into the flat list.</summary>
+      private void ExpandNode(TreeNodeItem item)
+      {
+         item.IsExpanded = true;
+         var idx = TreeItems.IndexOf(item);
+         if (idx < 0 || item.Node.Children is null) return;
+         int insertAt = idx + 1;
+         foreach (var child in item.Node.Children)
+         {
+            var childItem = new TreeNodeItem { Node = child, Depth = item.Depth + 1 };
+            TreeItems.Insert(insertAt++, childItem);
+         }
+      }
+
+      /// <summary>Removes the entire subtree below <paramref name="item"/> from the flat list.</summary>
+      private void CollapseNode(TreeNodeItem item)
+      {
+         item.IsExpanded = false;
+         var idx = TreeItems.IndexOf(item);
+         if (idx < 0) return;
+         while (idx + 1 < TreeItems.Count && TreeItems[idx + 1].Depth > item.Depth)
+            TreeItems.RemoveAt(idx + 1);
+      }
+
+      /// <summary>
+      /// Adds <paramref name="node"/> and its children to <see cref="TreeItems"/>.
+      /// Children are expanded automatically up to <paramref name="expandDepth"/> levels.
+      /// </summary>
+      private void FlattenTree(TreeNode node, int depth, int expandDepth)
+      {
+         var item = new TreeNodeItem { Node = node, Depth = depth };
+         if (depth < expandDepth && node.Children?.Count > 0)
+            item.IsExpanded = true;
+         TreeItems.Add(item);
+         if (item.IsExpanded && node.Children is not null)
+            foreach (var child in node.Children)
+               FlattenTree(child, depth + 1, expandDepth);
+      }
+
       private void SetBusy(bool busy, string? message = null)
       {
          Busy.IsRunning = busy;
@@ -385,7 +461,9 @@ namespace DevFlowMonitor
       private void HideResults()
       {
          ScreenshotImage.IsVisible = false;
-         TreeScroll.IsVisible = false;
+         TreeColumn.IsVisible = false;
+         TreeItems.Clear();
+         SelectedTreeNode = null;
       }
    }
 
@@ -420,7 +498,135 @@ namespace DevFlowMonitor
    }
 
    [JsonSerializable(typeof(List<DevFlowAgent>))]
+   [JsonSerializable(typeof(List<TreeNode>))]
    internal partial class DevFlowJsonContext : JsonSerializerContext { }
+
+   // ── Tree JSON models ─────────────────────────────────────────────────────
+
+   public class TreeNode
+   {
+      [JsonPropertyName("id")]          public string Id { get; set; } = string.Empty;
+      [JsonPropertyName("parentId")]    public string? ParentId { get; set; }
+      [JsonPropertyName("type")]        public string Type { get; set; } = string.Empty;
+      [JsonPropertyName("fullType")]    public string FullType { get; set; } = string.Empty;
+      [JsonPropertyName("automationId")] public string? AutomationId { get; set; }
+      [JsonPropertyName("text")]        public string? Text { get; set; }
+      [JsonPropertyName("isVisible")]   public bool IsVisible { get; set; }
+      [JsonPropertyName("isEnabled")]   public bool IsEnabled { get; set; }
+      [JsonPropertyName("isFocused")]   public bool IsFocused { get; set; }
+      [JsonPropertyName("opacity")]     public double Opacity { get; set; }
+      [JsonPropertyName("bounds")]      public NodeBounds? Bounds { get; set; }
+      [JsonPropertyName("windowBounds")] public NodeBounds? WindowBounds { get; set; }
+      [JsonPropertyName("state")]       public NodeState? State { get; set; }
+      [JsonPropertyName("traits")]      public List<string>? Traits { get; set; }
+      [JsonPropertyName("children")]    public List<TreeNode>? Children { get; set; }
+   }
+
+   public class NodeBounds
+   {
+      [JsonPropertyName("x")]      public double X { get; set; }
+      [JsonPropertyName("y")]      public double Y { get; set; }
+      [JsonPropertyName("width")]  public double Width { get; set; }
+      [JsonPropertyName("height")] public double Height { get; set; }
+   }
+
+   public class NodeState
+   {
+      [JsonPropertyName("displayed")] public bool Displayed { get; set; }
+      [JsonPropertyName("enabled")]   public bool Enabled { get; set; }
+      [JsonPropertyName("selected")]  public bool Selected { get; set; }
+      [JsonPropertyName("focused")]   public bool Focused { get; set; }
+      [JsonPropertyName("opacity")]   public double Opacity { get; set; }
+   }
+
+   // ── Tree flat-list view model ─────────────────────────────────────────────
+
+   public class TreeNodeItem : INotifyPropertyChanged
+   {
+      public required TreeNode Node { get; init; }
+      public required int Depth { get; init; }
+
+      public bool HasChildren => Node.Children?.Count > 0;
+
+      private bool _isExpanded;
+      public bool IsExpanded
+      {
+         get => _isExpanded;
+         set { _isExpanded = value; OnPropertyChanged(); OnPropertyChanged(nameof(ExpandIcon)); }
+      }
+
+      // ── Tree row display ────────────────────────────────────────────────
+
+      public Thickness IndentPadding => new(Depth * 14.0, 2, 4, 2);
+
+      public string ExpandIcon => HasChildren ? (_isExpanded ? "▾" : "▸") : " ";
+
+      public string TypeIcon => Node.Type switch
+      {
+         "Button"                                             => "🔘",
+         "Label"                                              => "🏷",
+         "Image"                                              => "🖼",
+         "Entry"                                              => "✏",
+         "Editor"                                             => "📝",
+         "ScrollView"                                         => "📜",
+         "ContentPage"                                        => "📄",
+         "Window"                                             => "🪟",
+         "Grid"                                               => "⊞",
+         "VerticalStackLayout" or "HorizontalStackLayout"
+            or "StackLayout"                                  => "⊟",
+         "AppShell" or "Shell"                                => "🐚",
+         "Frame" or "Border"                                  => "▭",
+         "ActivityIndicator"                                  => "⏳",
+         "Switch"                                             => "↕",
+         "CollectionView" or "ListView"                       => "📋",
+         "ShellItem" or "ShellSection" or "ShellContent"
+            or "FlyoutButton"                                 => "🗂",
+         _                                                    => "▫"
+      };
+
+      public string DisplayType => Node.Type;
+
+      public string DisplayLabel =>
+         Node.AutomationId is { Length: > 0 } aid ? $"#{aid}" :
+         Node.Text        is { Length: > 0 } txt ? $"\"{txt}\"" :
+         string.Empty;
+
+      public bool IsHiddenNode => !(Node.State?.Displayed ?? Node.IsVisible);
+
+      // ── Detail panel ────────────────────────────────────────────────────
+
+      public string FullTypeLabel    => Node.FullType;
+      public string IdLabel          => $"id: {Node.Id}";
+      public bool   HasAutomationId  => Node.AutomationId is { Length: > 0 };
+      public string AutomationIdLabel => $"automationId: {Node.AutomationId}";
+      public bool   HasText          => Node.Text is { Length: > 0 };
+      public string TextLabel        => $"text: \"{Node.Text}\"";
+
+      public string BoundsLabel =>
+         Node.Bounds is { } b
+            ? $"bounds: ({b.X:F1}, {b.Y:F1})  {b.Width:F1} × {b.Height:F1}"
+            : string.Empty;
+
+      public string StateLabel
+      {
+         get
+         {
+            if (Node.State is not { } s) return string.Empty;
+            var parts = new List<string>(4);
+            if (s.Displayed) parts.Add("visible");
+            if (s.Enabled)   parts.Add("enabled");
+            if (s.Focused)   parts.Add("focused");
+            if (s.Selected)  parts.Add("selected");
+            return parts.Count > 0
+               ? string.Join("  ·  ", parts)
+               : "hidden / disabled";
+         }
+      }
+
+      public event PropertyChangedEventHandler? PropertyChanged;
+      private void OnPropertyChanged([CallerMemberName] string? name = null)
+         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+   }
 }
 
 

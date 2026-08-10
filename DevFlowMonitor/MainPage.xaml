@@ -57,6 +57,7 @@
                 VerticalOptions="Center"
                 FontSize="12"
                 TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
+         
          <ActivityIndicator x:Name="Busy"
                             Grid.Column="5"
                             IsRunning="False"
@@ -111,18 +112,111 @@
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill" />
 
-         <!-- Col 2: Tree JSON viewer -->
-         <ScrollView x:Name="TreeScroll"
-                     Grid.Column="2"
-                     IsVisible="False">
-            <Editor x:Name="TreeEditor"
-                    IsReadOnly="True"
-                    FontFamily="OpenSansRegular"
-                    FontSize="11"
-                    AutoSize="TextChanges"
-                    BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#1E1E1E}"
-                    Text="" />
-         </ScrollView>
+         <!-- Col 2: Hierarchical tree view -->
+         <Grid x:Name="TreeColumn"
+               Grid.Column="2"
+               RowDefinitions="*,Auto"
+               RowSpacing="4"
+               IsVisible="False">
+
+            <!-- Tree node list -->
+            <CollectionView x:Name="TreeView"
+                            Grid.Row="0"
+                            ItemsSource="{Binding TreeItems}"
+                            SelectionMode="Single"
+                            SelectionChanged="OnTreeNodeSelected"
+                            EmptyView="Tree not loaded — press 🌳 Tree">
+               <CollectionView.ItemTemplate>
+                  <DataTemplate>
+                     <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto"
+                           ColumnSpacing="3"
+                           Padding="{Binding IndentPadding}"
+                           HeightRequest="26">
+
+                        <!-- Expand / collapse toggle -->
+                        <Label Grid.Column="0"
+                               Text="{Binding ExpandIcon}"
+                               FontSize="13"
+                               WidthRequest="16"
+                               VerticalOptions="Center">
+                           <Label.GestureRecognizers>
+                              <TapGestureRecognizer CommandParameter="{Binding}"
+                                                    Tapped="OnExpandToggled" />
+                           </Label.GestureRecognizers>
+                        </Label>
+
+                        <!-- Type icon -->
+                        <Label Grid.Column="1"
+                               Text="{Binding TypeIcon}"
+                               FontSize="12"
+                               VerticalOptions="Center" />
+
+                        <!-- Short type name -->
+                        <Label Grid.Column="2"
+                               Text="{Binding DisplayType}"
+                               FontSize="11"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#0066CC, Dark=#66AAFF}"
+                               VerticalOptions="Center" />
+
+                        <!-- AutomationId / text / empty -->
+                        <Label Grid.Column="3"
+                               Text="{Binding DisplayLabel}"
+                               FontSize="11"
+                               TextColor="{AppThemeBinding Light=#555555, Dark=#AAAAAA}"
+                               LineBreakMode="TailTruncation"
+                               VerticalOptions="Center" />
+
+                        <!-- "hidden" badge -->
+                        <Label Grid.Column="4"
+                               Text="hidden"
+                               FontSize="9"
+                               TextColor="Gray"
+                               VerticalOptions="Center"
+                               HorizontalOptions="End"
+                               IsVisible="{Binding IsHiddenNode}" />
+                     </Grid>
+                  </DataTemplate>
+               </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Selected-node detail panel -->
+            <Frame x:Name="NodeDetailFrame"
+                   Grid.Row="1"
+                   IsVisible="False"
+                   Padding="10,8"
+                   CornerRadius="6"
+                   HasShadow="False"
+                   BackgroundColor="{AppThemeBinding Light=#EEF4FF, Dark=#1A2035}">
+               <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="2">
+                  <Label Grid.Row="0"
+                         Text="{Binding SelectedTreeNode.FullTypeLabel}"
+                         FontAttributes="Bold"
+                         FontSize="12" />
+                  <Label Grid.Row="1"
+                         Text="{Binding SelectedTreeNode.IdLabel}"
+                         FontSize="10"
+                         TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
+                  <Label Grid.Row="2"
+                         Text="{Binding SelectedTreeNode.AutomationIdLabel}"
+                         FontSize="11"
+                         IsVisible="{Binding SelectedTreeNode.HasAutomationId}" />
+                  <Label Grid.Row="3"
+                         Text="{Binding SelectedTreeNode.TextLabel}"
+                         FontSize="11"
+                         IsVisible="{Binding SelectedTreeNode.HasText}" />
+                  <Label Grid.Row="4"
+                         Text="{Binding SelectedTreeNode.BoundsLabel}"
+                         FontSize="10"
+                         TextColor="{AppThemeBinding Light=DimGray, Dark=Silver}" />
+                  <Label Grid.Row="5"
+                         Text="{Binding SelectedTreeNode.StateLabel}"
+                         FontSize="10"
+                         TextColor="{AppThemeBinding Light=DimGray, Dark=Silver}" />
+               </Grid>
+            </Frame>
+
+         </Grid>
 
       </Grid>
 
