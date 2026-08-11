@@ -1,29 +1,14 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using DevFlowMonitor.Helpers;
 
 namespace DevFlowMonitor
 {
    public partial class MainPage : ContentPage, INotifyPropertyChanged
    {
-      private const int BrokerPort = 19223;
       private const int PollIntervalMs = 5_000;
-
-      // Android emulator reaches the host via 10.0.2.2; all other platforms use localhost.
-      private static string BrokerHost =>
-#if ANDROID
-         "10.0.2.2";
-#else
-         "localhost";
-#endif
-
-      private static string BrokerAgentsUrl => $"http://{BrokerHost}:{BrokerPort}/api/agents";
-
-      private static readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(4) };
 
       private CancellationTokenSource? _cts;
       private DevFlowAgent? _selectedAgent;
@@ -89,10 +74,7 @@ namespace DevFlowMonitor
          {
             try
             {
-               var agents = await _http.GetFromJsonAsync<List<DevFlowAgent>>(
-                  BrokerAgentsUrl,
-                  DevFlowJsonContext.Default.ListDevFlowAgent,
-                  ct);
+               var agents = await DevFlowBrokerClient.FetchAgentsAsync(ct);
 
                MainThread.BeginInvokeOnMainThread(() =>
                {
@@ -171,7 +153,7 @@ namespace DevFlowMonitor
          ActionStatusLabel.Text = "Setting up ADB port forward…";
          try
          {
-            var (devices, err) = await RunAdbAsync("devices");
+            var (devices, err) = await DevFlowCliHelper.RunAdbAsync("devices");
             if (err.Length > 0 && devices.Length == 0)
             {
                ActionStatusLabel.Text = $"adb error: {err.Trim()}";
@@ -197,7 +179,7 @@ namespace DevFlowMonitor
             var results = new List<string>();
             foreach (var serial in serials)
             {
-               var (stdout, stderr) = await RunAdbAsync($"-s {serial} reverse tcp:{BrokerPort} tcp:{BrokerPort}");
+               var (stdout, stderr) = await DevFlowCliHelper.RunAdbAsync($"-s {serial} reverse tcp:{DevFlowBrokerClient.BrokerPort} tcp:{DevFlowBrokerClient.BrokerPort}");
                var line = stdout.Trim().Length > 0 ? stdout.Trim() : stderr.Trim();
                results.Add($"{serial}: {(line.Length > 0 ? line : "ok")}");
             }
@@ -213,30 +195,7 @@ namespace DevFlowMonitor
          }
       }
 
-      private static async Task<(string Stdout, string Stderr)> RunAdbAsync(string arguments)
-      {
-         // Prefer ANDROID_HOME env var, fall back to common Windows install path.
-         var sdkRoot = Environment.GetEnvironmentVariable("ANDROID_HOME")
-            ?? Environment.GetEnvironmentVariable("ANDROID_SDK_ROOT")
-            ?? @"C:\Program Files (x86)\Android\android-sdk";
-         var adbPath = Path.Combine(sdkRoot, "platform-tools", "adb.exe");
-         if (!File.Exists(adbPath))
-            adbPath = "adb";  // fall back to PATH
 
-         var psi = new ProcessStartInfo(adbPath, arguments)
-         {
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            CreateNoWindow = true,
-         };
-         using var proc = Process.Start(psi)
-            ?? throw new InvalidOperationException("Failed to start adb.");
-         var stdout = await proc.StandardOutput.ReadToEndAsync();
-         var stderr = await proc.StandardError.ReadToEndAsync();
-         await proc.WaitForExitAsync();
-         return (stdout, stderr);
-      }
 
       // ── Screenshot ───────────────────────────────────────────────────────
 
@@ -256,7 +215,7 @@ namespace DevFlowMonitor
             var tmpPath = Path.ChangeExtension(Path.GetTempFileName(), ".png");
             _lastScreenshotPath = tmpPath;
 
-            var (exitCode, _, stderr) = await RunDevFlowAsync(
+            var (exitCode, _, stderr) = await DevFlowCliHelper.RunDevFlowAsync(
                $"ui screenshot --output \"{tmpPath}\" --overwrite",
                _selectedAgent);
 
@@ -298,7 +257,7 @@ namespace DevFlowMonitor
 
          try
          {
-            var (exitCode, stdout, stderr) = await RunDevFlowAsync(
+            var (exitCode, stdout, stderr) = await DevFlowCliHelper.RunDevFlowAsync(
                "ui tree --depth 0",
                _selectedAgent);
 
@@ -336,33 +295,7 @@ namespace DevFlowMonitor
 
       // ── Helpers ──────────────────────────────────────────────────────────
 
-#if !ANDROID
-      /// <summary>
-      /// Runs a <c>maui devflow</c> sub-command targeting the given agent's port
-      /// and returns (exitCode, stdout, stderr).
-      /// Only available on platforms where the <c>maui</c> CLI is installed (Windows).
-      /// </summary>
-      private static async Task<(int ExitCode, string Stdout, string Stderr)> RunDevFlowAsync(
-         string arguments, DevFlowAgent agent)
-      {
-         var psi = new ProcessStartInfo("maui", $"devflow --agent-port {agent.Port} {arguments}")
-         {
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            CreateNoWindow = true,
-         };
 
-         using var process = Process.Start(psi)
-            ?? throw new InvalidOperationException("Failed to start maui devflow process.");
-
-         var stdoutTask = process.StandardOutput.ReadToEndAsync();
-         var stderrTask = process.StandardError.ReadToEndAsync();
-         await process.WaitForExitAsync();
-
-         return (process.ExitCode, await stdoutTask, await stderrTask);
-      }
-#endif
 
       // ── Tap CounterBtn ────────────────────────────────────────────────────
 
@@ -377,7 +310,7 @@ namespace DevFlowMonitor
          SetBusy(true, "Tapping CounterBtn…");
          try
          {
-            var (exitCode, _, stderr) = await RunDevFlowAsync(
+            var (exitCode, _, stderr) = await DevFlowCliHelper.RunDevFlowAsync(
                "ui tap --automationId \"CounterBtn\"",
                _selectedAgent);
 
@@ -410,42 +343,13 @@ namespace DevFlowMonitor
 
       /// <summary>Inserts the immediate children of <paramref name="item"/> into the flat list.</summary>
       private void ExpandNode(TreeNodeItem item)
-      {
-         item.IsExpanded = true;
-         var idx = TreeItems.IndexOf(item);
-         if (idx < 0 || item.Node.Children is null) return;
-         int insertAt = idx + 1;
-         foreach (var child in item.Node.Children)
-         {
-            var childItem = new TreeNodeItem { Node = child, Depth = item.Depth + 1 };
-            TreeItems.Insert(insertAt++, childItem);
-         }
-      }
+         => VisualTreeHelper.ExpandNode(item, TreeItems);
 
-      /// <summary>Removes the entire subtree below <paramref name="item"/> from the flat list.</summary>
       private void CollapseNode(TreeNodeItem item)
-      {
-         item.IsExpanded = false;
-         var idx = TreeItems.IndexOf(item);
-         if (idx < 0) return;
-         while (idx + 1 < TreeItems.Count && TreeItems[idx + 1].Depth > item.Depth)
-            TreeItems.RemoveAt(idx + 1);
-      }
+         => VisualTreeHelper.CollapseNode(item, TreeItems);
 
-      /// <summary>
-      /// Adds <paramref name="node"/> and its children to <see cref="TreeItems"/>.
-      /// Children are expanded automatically up to <paramref name="expandDepth"/> levels.
-      /// </summary>
       private void FlattenTree(TreeNode node, int depth, int expandDepth)
-      {
-         var item = new TreeNodeItem { Node = node, Depth = depth };
-         if (depth < expandDepth && node.Children?.Count > 0)
-            item.IsExpanded = true;
-         TreeItems.Add(item);
-         if (item.IsExpanded && node.Children is not null)
-            foreach (var child in node.Children)
-               FlattenTree(child, depth + 1, expandDepth);
-      }
+         => VisualTreeHelper.FlattenTree(node, depth, expandDepth, TreeItems);
 
       private void SetBusy(bool busy, string? message = null)
       {
