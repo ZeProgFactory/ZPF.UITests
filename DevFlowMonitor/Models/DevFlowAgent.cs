@@ -34,4 +34,7 @@ public class DevFlowAgent
 
 [JsonSerializable(typeof(List<DevFlowAgent>))]
 [JsonSerializable(typeof(List<TreeNode>))]
+[JsonSerializable(typeof(List<ElementInfo>))]
+[JsonSerializable(typeof(TapRequest))]
+[JsonSerializable(typeof(ActionResponse))]
 internal partial class DevFlowJsonContext : JsonSerializerContext { }

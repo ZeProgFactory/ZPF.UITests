@@ -329,6 +329,58 @@ namespace DevFlowMonitor
 #endif
       }
 
+      private async void OnTapCounterBtnClickedHTTP(object? sender, EventArgs e)
+      {
+         var agent = _selectedAgent;
+         if (agent is null) return;
+
+         SetBusy(true, "Tapping CounterBtn…");
+         try
+         {
+            ActionResponse? result = null;
+            HttpRequestException? lastHttpEx = null;
+
+            try
+            {
+               //StopMonitoring();
+
+               var elementId = "CounterBtn";
+
+               //var elementId = await DevFlowAgentClient.FindElementByAutomationIdAsync(
+               //   agent, "CounterBtn");
+
+               //if (elementId is null)
+               //{
+               //   ActionStatusLabel.Text = "CounterBtn not found in visual tree.";
+               //   return;
+               //}
+
+               result = await DevFlowAgentClient.TapElementAsync(agent, elementId);
+            }
+            catch (HttpRequestException httpEx)
+            {
+               // Agent connection dropped prematurely; wait briefly and retry.
+               lastHttpEx = httpEx;
+            }
+
+            if (result is null)
+               throw new InvalidOperationException(
+                  $"All tap attempts failed. Last error: {lastHttpEx?.Message}", lastHttpEx);
+
+            ActionStatusLabel.Text = result.Success
+               ? "CounterBtn tapped ✓"
+               : $"Tap failed: {result.Error?.ErrorCode ?? result.Error?.Title ?? "unknown error"}";
+         }
+         catch (Exception ex)
+         {
+            ActionStatusLabel.Text = $"Error: {ex.Message}";
+         }
+         finally
+         {
+            SetBusy(false);
+         }
+      }
+
       // ── Tree expand / collapse / selection ──────────────────────────────────
 
       private void OnTreeNodeSelected(object? sender, SelectionChangedEventArgs e)
